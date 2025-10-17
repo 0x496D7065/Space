@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 2fb71041a8ea31941b582111e767b56f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 269533
+  packageName: Style Profile - Runtime Style Modifications
+  packageVersion: 1.0.2
+  assetPath: Packages/com.citrion.styleprofile/Content/Fonts/Liberation Sans/LiberationSans
+    SDF.asset
+  uploadId: 729412

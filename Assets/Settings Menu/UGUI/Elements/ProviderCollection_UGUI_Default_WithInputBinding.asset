@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 017d7f9a94f86bb4c9010dcf42ebdc3a, type: 3}
+  m_Name: ProviderCollection_UGUI_Default_WithInputBinding
+  m_EditorClassIdentifier: 
+  relations:
+  - key: Void
+    value: {fileID: 11400000, guid: 185210aa27445f54784d632bd37287cf, type: 2}
+  - key: Boolean
+    value: {fileID: 11400000, guid: 2335b2b2fbf39da49a566eb81ca5faa6, type: 2}
+  - key: Int32
+    value: {fileID: 11400000, guid: 8c31e4454f3227145b4b287822c3fc11, type: 2}
+  - key: Single
+    value: {fileID: 11400000, guid: fb5a64873722652419c81f907a46a205, type: 2}
+  - key: String
+    value: {fileID: 11400000, guid: 8c31e4454f3227145b4b287822c3fc11, type: 2}
+  - key: Enum
+    value: {fileID: 11400000, guid: a1ca543411e341d428123cb733e4e0ef, type: 2}
+  - key: Button
+    value: {fileID: 11400000, guid: 185210aa27445f54784d632bd37287cf, type: 2}
+  - key: Toggle
+    value: {fileID: 11400000, guid: 2335b2b2fbf39da49a566eb81ca5faa6, type: 2}
+  - key: Slider Float
+    value: {fileID: 11400000, guid: fb5a64873722652419c81f907a46a205, type: 2}
+  - key: Dropdown
+    value: {fileID: 11400000, guid: a1ca543411e341d428123cb733e4e0ef, type: 2}
+  - key: Previous Next Selector
+    value: {fileID: 11400000, guid: 8c31e4454f3227145b4b287822c3fc11, type: 2}
+  - key: Title
+    value: {fileID: 11400000, guid: 81f8a9c47ecf14b4e93ccaec4ba120ba, type: 2}
+  - key: Headline
+    value: {fileID: 11400000, guid: 095c2fc5c581bc4409cb9d8d58fecb7c, type: 2}
+  - key: Container
+    value: {fileID: 11400000, guid: 55efe0ef701ba85478950f63d1e40672, type: 2}
+  - key: Container
+    value: {fileID: 11400000, guid: 55efe0ef701ba85478950f63d1e40672, type: 2}
+  - key: SerializedInputBinding
+    value: {fileID: 11400000, guid: 73895a332b8ada942ae16982edc49372, type: 2}

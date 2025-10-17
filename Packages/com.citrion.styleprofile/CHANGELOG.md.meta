@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7337edfcb14e1314489cee0170e9315f
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 269533
+  packageName: Style Profile - Runtime Style Modifications
+  packageVersion: 1.0.2
+  assetPath: Packages/com.citrion.styleprofile/CHANGELOG.md
+  uploadId: 729412

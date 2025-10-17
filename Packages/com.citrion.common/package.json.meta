@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ca7f56b7c9f2d0248a4100fa233cf757
+PackageManifestImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 269533
+  packageName: Style Profile - Runtime Style Modifications
+  packageVersion: 1.0.2
+  assetPath: Packages/com.citrion.common/package.json
+  uploadId: 729412
