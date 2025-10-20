@@ -2,15 +2,43 @@ using UnityEngine;
 
 public class Ship : DetectableObject
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private float health;
+    [SerializeField] private float orbitRadius;
+    [SerializeField] private float orbitSpeed;
+
+    [SerializeField] private RectTransform radarCenter;
+
+
+    private float currentAngle = 0f;
+    private RectTransform rt;
+    private bool isDead = false;
+
+    private void Awake()
     {
-        
+        rt = GetComponent<RectTransform>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        currentAngle += orbitSpeed * Time.deltaTime;
+        currentAngle %= 360f;
+
+        float rad = currentAngle * Mathf.Deg2Rad;
+        Vector2 offset = new Vector2(Mathf.Sin(rad), Mathf.Cos(rad)) * orbitRadius;
+
+        rt.anchoredPosition = radarCenter.anchoredPosition + offset;
+    }
+    public void TakeDamage(float damage)
+    {
+        if (isDead) return;
+
+        health -= damage;
+        if (health <= 0)
+        {
+            isDead = true;
+        }
+        Debug.Log($"Ship hit. Health: {health}, isDead:{isDead}");
+        if (isDead)
+            Destroy(this.gameObject);
     }
 }
