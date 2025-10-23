@@ -7,7 +7,7 @@ public class RadarShoot : MonoBehaviour
     [SerializeField] LayerMask enemyLayer;
 
     [Range(0f, 360f)]
-    [SerializeField] float azimuth = 0f;
+    [SerializeField] public float azimuth = 0f;
 
     [ContextMenu("Fire Missile")]
     public void FireFromInspector()

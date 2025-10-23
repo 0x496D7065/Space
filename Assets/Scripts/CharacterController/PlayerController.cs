@@ -23,6 +23,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float grabDistance = 3f;
     [SerializeField] private LayerMask grabMask;
 
+    [Header("Interact Settings")]
+    [SerializeField] private float interactDistance = 3f;
+    [SerializeField] private LayerMask interactMask;
+
     private readonly float groundDistance = 0.4f;
     private Vector3 velocity;
     private Rigidbody heldObject;
@@ -103,6 +107,19 @@ public class PlayerController : MonoBehaviour
         heldObject.transform.SetParent(null);
         heldObject.isKinematic = false;
         heldObject = null;
+    }
+
+    public void InteractClick(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.performed) return;
+        if (heldObject != null) return;
+
+        if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
+        {
+            Interactable interactable = Hit.collider.GetComponent<Interactable>();
+            if (interactable != null)
+                interactable.Interact();
+        }
     }
 }
 
