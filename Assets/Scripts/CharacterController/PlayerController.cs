@@ -1,20 +1,18 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {    
     [Header("References")]
-        
-    [SerializeField] private PlayerInput         playerInput = null;
-    [SerializeField] private Transform           playerBody = null;
-    [SerializeField] private CharacterController controller = null;
+    [SerializeField] private CharacterController charController;
 
 
     [Header("Movement Settings")]
-    [SerializeField] private float movementSpeed = 2.5f;
-    [SerializeField] private float gravity = -9.81f;
-    [SerializeField] private float jumpHeight = 2f;
-    [SerializeField] private float maxAirControlAmount = 90f;
+    [SerializeField] private float walkSpeed;
+    [SerializeField] private float sprintMultiplier;
+    [SerializeField] private float gravity;
+    [SerializeField] private float jumpForce;
 
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Transform groundCheck;
@@ -24,101 +22,63 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float grabDistance = 3f;
     [SerializeField] private LayerMask grabMask;
 
-    private Vector3 inputMovement;
-    private Vector3 velocity;
-    private float currentMoveSpeed;
-    private bool keepMomentum = false;
-    private Vector3 airMomentum = Vector3.zero;
+    [Header("Interact Settings")]
+    [SerializeField] private float interactDistance = 3f;
+    [SerializeField] private LayerMask interactMask;
 
-    private float groundDistance = 0.4f;
-    private bool isGrounded;
+    private readonly float groundDistance = 0.4f;
+    private Vector3 velocity;
     private Rigidbody heldObject;
     private Camera playerCam;
+    
+    private PlayerInput input;
+    private InputAction moveAction;
+    private InputAction sprintAction;
+    private InputAction jumpAction;
 
-    public PlayerInput PlayerInput => playerInput;
-
-    private void Start()
+    private void Awake()
     {
+        charController = GetComponent<CharacterController>();
         playerCam = GetComponentInChildren<Camera>();
+        input = GetComponent<PlayerInput>();
+        moveAction = input.actions["Move"];
+        sprintAction = input.actions["Sprint"];
+        jumpAction = input.actions["Jump"];
     }
+
     private void Update()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        if (isGrounded && velocity.y < 0 && !keepMomentum)
-        {
-            velocity.y = -2f; // Small push down to keep grounded
-        }
-        if (isGrounded && velocity.y <= 0 && keepMomentum)
-        {
-            keepMomentum = false;
-            airMomentum = Vector3.zero;
-        }
-        float usedSpeed = keepMomentum ? currentMoveSpeed : movementSpeed;
-        // Apply gravity
-        velocity.y += gravity * Time.deltaTime;
+        Vector2 moveInput = moveAction.ReadValue<Vector2>();
+        bool isSprinting = sprintAction.IsPressed();
 
-        // Calculate final movement
-        Vector3 inputDir = playerBody.right * inputMovement.x + playerBody.forward * inputMovement.z;
-        inputDir.y = 0f;
-        inputDir.Normalize();
 
-        Vector3 move;
-        if (keepMomentum)
+        Vector3 moveDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
+        float speed = isSprinting ? walkSpeed * sprintMultiplier : walkSpeed;
+
+        charController.Move(speed * Time.deltaTime * moveDirection);
+
+        if (IsGrounded())
         {
-            // While airborne
-            if (inputDir.magnitude > 0f)
-            {
-                // Adjust air momentum gradually toward input direction
-                airMomentum = Vector3.RotateTowards(
-                airMomentum,
-                inputDir,
-                maxAirControlAmount * Mathf.Deg2Rad * Time.deltaTime,
-                float.MaxValue
-                );
-            }
+            if (velocity.y < 0)
+                velocity.y = -2f;
 
-            move = airMomentum * currentMoveSpeed;
+            if (jumpAction.triggered)
+                velocity.y = jumpForce;
         }
         else
         {
-            // Grounded movement, use input directly
-            move = inputDir * movementSpeed;
+            velocity.y -= gravity * Time.deltaTime;
         }
 
-
-        // Combine horizontal movement and vertical velocity
-        Vector3 finalMovement = (move * usedSpeed + new Vector3(0, velocity.y, 0)) * Time.deltaTime;
-
-        controller.Move(finalMovement);
-    }
-        
-    public void OnMove(InputAction.CallbackContext ctx)
-    {  
-        Vector2 inputValue = ctx.ReadValue<Vector2>();
-            
-        inputMovement = new Vector3(inputValue.x, 0f, inputValue.y);
+        charController.Move(velocity * Time.deltaTime);
     }
 
-    public void OnJump(InputAction.CallbackContext ctx)
+    private bool IsGrounded()
     {
-        Debug.Log("jump");
-        if (!ctx.performed) { return; }
-        if (isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            currentMoveSpeed = movementSpeed;
-            keepMomentum = true;
-        }
-    }
-
-    public void OnSprint(InputAction.CallbackContext ctx)
-    {
-        if (!ctx.performed)
-        {
-            movementSpeed = 2.5f;
-        }
-        else 
-            movementSpeed = 3.5f;
+        if (Physics.Raycast(groundCheck.position, Vector3.down, groundDistance, groundMask))
+            return true;
+        else
+            return false;
     }
 
     public void OnGrab(InputAction.CallbackContext ctx)
@@ -146,6 +106,47 @@ public class PlayerController : MonoBehaviour
         heldObject.transform.SetParent(null);
         heldObject.isKinematic = false;
         heldObject = null;
+    }
+
+    public void InteractClick(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.performed) return;
+        if (heldObject != null) return;
+
+        if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
+        {
+            if (Hit.collider.TryGetComponent(out Interactable component))
+                component.Interact();
+        }
+    }
+
+    private PlayerState GetNetworkState()
+    {
+        return new PlayerState
+        {
+            position = transform.position,
+            forward = transform.forward,
+
+            //pitch = _playerInput.y,
+            //yaw = _playerInput.x,
+
+            //moveInput = _movementComponent.AnimatorVelocity,
+
+            //Health = health,
+
+            //movementState = (global::FPSMovementState)_movementComponent.MovementState,
+            //poseState = (global::FPSPoseState)_movementComponent.PoseState,
+            //aimState = _aimState,
+            //actionState = _actionState,
+
+            //activeWeaponIndex = (byte)_activeWeaponIndex,
+        };
+    }
+    void FixedUpdate()
+    {
+        PlayerState state = GetNetworkState();
+        IntPtr data = PlayerStateSerializer.Serialize(state, SteamP2PManager.Instance.Own_ID, out int playerStateLength);
+        SteamP2PManager.Instance.SendToAllUnManagedUnsafe(data, (uint)playerStateLength, reliable: false);
     }
 }
 
