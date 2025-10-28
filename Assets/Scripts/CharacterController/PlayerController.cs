@@ -1,5 +1,4 @@
-using System.Runtime.CompilerServices;
-using UnityEditor.Experimental.GraphView;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -116,10 +115,38 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
         {
-            Interactable interactable = Hit.collider.GetComponent<Interactable>();
-            if (interactable != null)
-                interactable.Interact();
+            if (Hit.collider.TryGetComponent(out Interactable component))
+                component.Interact();
         }
+    }
+
+    private PlayerState GetNetworkState()
+    {
+        return new PlayerState
+        {
+            position = transform.position,
+            forward = transform.forward,
+
+            //pitch = _playerInput.y,
+            //yaw = _playerInput.x,
+
+            //moveInput = _movementComponent.AnimatorVelocity,
+
+            //Health = health,
+
+            //movementState = (global::FPSMovementState)_movementComponent.MovementState,
+            //poseState = (global::FPSPoseState)_movementComponent.PoseState,
+            //aimState = _aimState,
+            //actionState = _actionState,
+
+            //activeWeaponIndex = (byte)_activeWeaponIndex,
+        };
+    }
+    void FixedUpdate()
+    {
+        PlayerState state = GetNetworkState();
+        IntPtr data = PlayerStateSerializer.Serialize(state, SteamP2PManager.Instance.Own_ID, out int playerStateLength);
+        SteamP2PManager.Instance.SendToAllUnManagedUnsafe(data, (uint)playerStateLength, reliable: false);
     }
 }
 

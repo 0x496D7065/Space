@@ -22,13 +22,13 @@ public class GameSystems : MonoBehaviour
     public void Init_Systems_Host()
     {
         //turretFireEventCollector.SetActive(true);
-        //remotePlayerManager.SetActive(true);
+        remotePlayerManager.SetActive(true);
         //turretManager.SetActive(true);
         packetDispatch.SetActive(true);
     }
     public void Init_Systems_Client()
     {
-        //remotePlayerManager.SetActive(true);
+        remotePlayerManager.SetActive(true);
         //remoteConstructionManager.SetActive(true);
         packetDispatch.SetActive(true);
     }

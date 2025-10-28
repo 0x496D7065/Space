@@ -1,10 +1,6 @@
 using System.Collections.Generic;
 using System;
 using Unity.Mathematics;
-using System.Net.Sockets;
-using UnityEngine;
-using Steamworks;
-using System.IO;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Collections;
 
@@ -30,20 +26,20 @@ public static class PlayerStateSerializer
         NetWriter.WriteFloat(data, state.forward.y);
         NetWriter.WriteFloat(data, state.forward.z);
 
-        NetWriter.WriteFloat(data, state.pitch);
-        NetWriter.WriteFloat(data, state.yaw);
+        //NetWriter.WriteFloat(data, state.pitch);
+        //NetWriter.WriteFloat(data, state.yaw);
 
-        NetWriter.WriteFloat(data, state.moveInput.x);
-        NetWriter.WriteFloat(data, state.moveInput.y);
+        //NetWriter.WriteFloat(data, state.moveInput.x);
+        //NetWriter.WriteFloat(data, state.moveInput.y);
 
         NetWriter.WriteUShort(data, (ushort)state.Health);
 
-        NetWriter.WriteByte(data, (byte)state.movementState);
-        NetWriter.WriteByte(data, (byte)state.poseState);
+        //NetWriter.WriteByte(data, (byte)state.movementState);
+        //NetWriter.WriteByte(data, (byte)state.poseState);
         //NetWriter.WriteByte(data, (byte)state.aimState);
         //NetWriter.WriteByte(data, (byte)state.actionState);
 
-        NetWriter.WriteByte(data, state.activeWeaponIndex);
+        //NetWriter.WriteByte(data, state.activeWeaponIndex);
 
         length = data.Count;
         byte* ptr = (byte*)UnsafeUtility.Malloc(length, 8, Allocator.Temp);
@@ -63,17 +59,17 @@ public static class PlayerStateSerializer
         state.position = new float3(reader.ReadFloat(), reader.ReadFloat(), reader.ReadFloat());
         state.forward = new float3(reader.ReadFloat(), reader.ReadFloat(), reader.ReadFloat());
 
-        state.pitch = reader.ReadFloat();
-        state.yaw = reader.ReadFloat();
+        //state.pitch = reader.ReadFloat();
+        //state.yaw = reader.ReadFloat();
 
-        state.moveInput = new Vector2(reader.ReadFloat(), reader.ReadFloat());
+        //state.moveInput = new Vector2(reader.ReadFloat(), reader.ReadFloat());
         state.Health = (short)reader.ReadUShort();
-        state.movementState = (FPSMovementState)reader.ReadByte();
-        state.poseState = (FPSPoseState)reader.ReadByte();
+        //state.movementState = (FPSMovementState)reader.ReadByte();
+        //state.poseState = (FPSPoseState)reader.ReadByte();
         //state.aimState = (FPSAimState)reader.ReadByte();
         //state.actionState = (FPSActionState)reader.ReadByte();
 
-        state.activeWeaponIndex = reader.ReadByte();
+        //state.activeWeaponIndex = reader.ReadByte();
 
         return state;
     }

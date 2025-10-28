@@ -9,7 +9,7 @@ public class RemotePlayerManager : MonoBehaviour
     public static RemotePlayerManager Instance;
     public GameObject remotePlayerPrefab;
 
-    //public Dictionary<CSteamID, RemoteFPSController> remotePlayers = new();
+    public Dictionary<CSteamID, RemoteFPSController> remotePlayers = new();
 
     private void Awake()
     {
@@ -22,56 +22,58 @@ public class RemotePlayerManager : MonoBehaviour
         Instance = this;
     }
 
-    //public void InstantiateRemotePlayer(CSteamID cSteamID, ushort TargetableID)
-    //{
-    //    GameObject go = Instantiate(remotePlayerPrefab);
-    //    var remote = go.GetComponent<RemoteFPSController>();
-    //    remotePlayers[cSteamID] = remote;
-    //    remote.TargetableID = TargetableID;
-    //}
+    public void InstantiateRemotePlayer(CSteamID cSteamID, ushort TargetableID)
+    {
+        GameObject go = Instantiate(remotePlayerPrefab);
+        var remote = go.GetComponent<RemoteFPSController>();
+        remotePlayers[cSteamID] = remote;
+        remote.TargetableID = TargetableID;
+    }
 
-    //public void HandlePlayerPacket(ParsedPacket packet)
-    //{
-    //    if (!remotePlayers.TryGetValue((CSteamID)(packet.originalSender), out var remote))
-    //    {
-    //        if (packet.originalSender == SteamP2PManager.Instance.Own_ID && packet.type == PacketType.PlayerRejoin)//this is used if the rejoining player is the local player
-    //        {
-    //            PlayerRejoinEvent rejoinEvent = PlayerRejoinEventSerializer.Deserialize(packet.payload);
-    //            //ActivateRejoinRemote(packet.originalSender, rejoinEvent);
-    //            return;
-    //        }
-    //        else
-    //            return;
-    //    }
+    public void HandlePlayerPacket(ParsedPacket packet)
+    {
+        if (!remotePlayers.TryGetValue((CSteamID)(packet.originalSender), out var remote))
+        {
+            InstantiateRemotePlayer((CSteamID)packet.originalSender, 0);
+            return;
+            //if (packet.originalSender == SteamP2PManager.Instance.Own_ID && packet.type == PacketType.PlayerRejoin)//this is used if the rejoining player is the local player
+            //{
+            //    //PlayerRejoinEvent rejoinEvent = PlayerRejoinEventSerializer.Deserialize(packet.payload);
+            //    //ActivateRejoinRemote(packet.originalSender, rejoinEvent);
+            //    return;
+            //}
+            //else
+            //    return;
+        }
 
-    //    switch (packet.type)
-    //    {
-    //        case PacketType.RemoteFire:
-    //            RemoteFireEvent fireEvent = FireEventSerializer.Deserialize(packet.payload);
-    //            remote.ApplyFireEvent(fireEvent);
-    //            if (SteamP2PManager.Instance.isHost)
-    //            {
-    //                //EnemyAIManager.Instance.ApplyDamage(fireEvent);
-    //            }
-    //            break;
-    //        case PacketType.PlayerState:
-    //            PlayerState state = PlayerStateSerializer.Deserialize(packet.payload);
-    //            remote.ApplyNetworkState(state);
-    //            break;
-    //        case PacketType.DeathEvent:
-    //            remote.IsDead = true;
-    //            remote.OnDeath();
-    //            break;
-    //        case PacketType.PlayerRejoin:
-    //            //deserialize packet payload
-    //            PlayerRejoinEvent rejoinEvent = PlayerRejoinEventSerializer.Deserialize(packet.payload);
-    //            //ActivateRejoinRemote(packet.originalSender, rejoinEvent);
-    //            break;
-    //        case PacketType.PlayerLeft:
-    //            //DisableRemote(packet.originalSender, remote);
-    //            break;
-    //    }
-    //}
+        switch (packet.type)
+        {
+            case PacketType.RemoteFire:
+                //RemoteFireEvent fireEvent = FireEventSerializer.Deserialize(packet.payload);
+                //remote.ApplyFireEvent(fireEvent);
+                //if (SteamP2PManager.Instance.isHost)
+                //{
+                //    //EnemyAIManager.Instance.ApplyDamage(fireEvent);
+                //}
+                break;
+            case PacketType.PlayerState:
+                PlayerState state = PlayerStateSerializer.Deserialize(packet.payload);
+                remote.ApplyNetworkState(state);
+                break;
+            case PacketType.DeathEvent:
+                //remote.IsDead = true;
+                //remote.OnDeath();
+                break;
+            case PacketType.PlayerRejoin:
+                //deserialize packet payload
+                //PlayerRejoinEvent rejoinEvent = PlayerRejoinEventSerializer.Deserialize(packet.payload);
+                //ActivateRejoinRemote(packet.originalSender, rejoinEvent);
+                break;
+            case PacketType.PlayerLeft:
+                //DisableRemote(packet.originalSender, remote);
+                break;
+        }
+    }
 
     //public void DisableRemote(ulong cSteamID, RemoteFPSController remote)
     //{
