@@ -1,5 +1,4 @@
 using Steamworks;
-using Unity.Physics;
 using UnityEngine;
 
 public class PacketDispatch : MonoBehaviour
@@ -16,6 +15,8 @@ public class PacketDispatch : MonoBehaviour
         switch (parsedPacket.type)
         {
             case PacketType.PlayerState:
+                RemotePlayerManager.Instance.HandlePlayerPacket(parsedPacket);
+                break;
             case PacketType.RemoteFire:
             case PacketType.DeathEvent:
             case PacketType.PlayerRejoin://this can only be sent by the host
