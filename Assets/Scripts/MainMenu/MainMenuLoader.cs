@@ -10,12 +10,7 @@ public class MainMenuLoader: MonoBehaviour
 
     private IEnumerator WaitForSteamInitialization()
     {
-        // Wait until SteamManager is initialized
         while (!SteamManager.Initialized)
-        {
-            yield return null;
-        }
-        while (!SteamP2PManager.Initialized)
         {
             yield return null;
         }

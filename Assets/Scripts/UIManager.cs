@@ -78,11 +78,6 @@ public class UIManager : MonoBehaviour
     public void BackToMenu()
     {
         Debug.Log("Back to main menu");
-        if (SteamP2PManager.Instance.isHost)
-            SteamP2PManager.Instance.DisconnectAllClients();
-        else
-            SteamP2PManager.Instance.DisconnectFromHost();
-        Destroy(GameSystems.Instance.gameObject);
         SteamLobbyManager.Instance.LeaveLobby();
         StopAllCoroutines();
         SceneManager.LoadScene(1);//MainMenu scene

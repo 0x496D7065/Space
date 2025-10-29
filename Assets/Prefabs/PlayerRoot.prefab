@@ -42,7 +42,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571405994290756590}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -93,7 +93,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571405994290756590}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &6351332657465884539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,7 +400,8 @@ GameObject:
   - component: {fileID: 7852846161696778252}
   - component: {fileID: 8074275947611954818}
   - component: {fileID: 5794601363930080436}
-  - component: {fileID: 6062767155441058451}
+  - component: {fileID: 2035971907088531891}
+  - component: {fileID: 4232406914166897534}
   m_Layer: 0
   m_Name: PlayerRoot
   m_TagString: Untagged
@@ -434,7 +435,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4293421736442760333}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -482,8 +483,8 @@ MonoBehaviour:
     m_ActionName: 'Gameplay/ChangeWeapon[/Keyboard/f]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6062767155441058451}
-        m_TargetAssemblyTypeName: MouseLook, Assembly-CSharp
+      - m_Target: {fileID: 8074275947611954818}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnLook
         m_Mode: 0
         m_Arguments:
@@ -649,7 +650,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ee8e6348e97e44fb3a4cab3284691d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   charController: {fileID: 0}
+  playerBody: {fileID: 1668028052038016471}
+  playerCamera: {fileID: 3747433475679889622}
+  minPitch: -80
+  maxPitch: 80
   walkSpeed: 4
   sprintMultiplier: 2
   gravity: 9.81
@@ -692,7 +701,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6062767155441058451
+--- !u!114 &2035971907088531891
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -701,13 +710,49 @@ MonoBehaviour:
   m_GameObject: {fileID: 4293421736442760333}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45999032124b3484c90a7b8a55fb2cfe, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerBody: {fileID: 1668028052038016471}
-  playerCamera: {fileID: 3747433475679889622}
-  minPitch: -80
-  maxPitch: 80
+  sceneId: 0
+  _assetId: 3421249649
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &4232406914166897534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4293421736442760333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0.05
+  target: {fileID: 1668028052038016471}
+  updateMethod: 1
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!1 &4793276200047752314
 GameObject:
   m_ObjectHideFlags: 0

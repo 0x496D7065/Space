@@ -1,5 +1,6 @@
 using System;
 using CitrioN.SettingsMenuCreator;
+using Mirror;
 using Steamworks;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -26,13 +27,9 @@ public class MainMenuUI : MonoBehaviour
     public PlayerInput playerInput;
     public SettingsMenu_UGUI settingsMenu;
     private bool isOpened = true;
-    private bool isReady = false;
 
     private void Awake()
     {
-        //if (Instance != null) { Destroy(gameObject); return; }
-        //Instance = this;
-        //DontDestroyOnLoad(gameObject);
         input = new PlayerControls();
         input.UI.ToggleMenu.performed += ctx => HandleEscape();
     }
@@ -99,7 +96,6 @@ public class MainMenuUI : MonoBehaviour
     {
         ClosePlayMenu();
         LobbyMenu.SetActive(true);
-        isReady = false;
     }
     public void CloseLobbyMenu()
     {
@@ -125,35 +121,14 @@ public class MainMenuUI : MonoBehaviour
         SteamFriends.ActivateGameOverlay("friends");
     }
 
-    public unsafe void OnStartClicked()
+    public void OnStartClicked()
     {
-        if (!SteamP2PManager.Instance.isHost) return;
-
-        foreach (var state in SteamLobbyManager.Instance.clientReadyStates.Values)
+        if (NetworkServer.active && NetworkClient.isConnected)
         {
-            if (!state)
-            {
-                Debug.LogWarning("Not all clients are ready.");
-                return;
-            }
+            LobbyMenu.SetActive(false);
+            SteamworkManager networkManager = (SteamworkManager)NetworkManager.singleton;
+            Debug.Log("Changing to scene: " + networkManager.gameplayScene);
+            networkManager.ServerChangeScene(networkManager.gameplayScene);
         }
-
-        LobbyMenu.SetActive(false);
-
-        byte* msg = (byte*)UnsafeUtility.Malloc(1, 4, Allocator.Temp);
-        msg[0] = (byte)SteamP2PManager.LobbyPacketType.StartGame;
-        SteamP2PManager.Instance.SendToAllUnManagedUnsafe((IntPtr)msg, 1, reliable: true);
-        SteamP2PManager.Instance.OnDataReceived -= SteamP2PManager.Instance.HandleLobbyMessage;
-        SteamP2PManager.GameOn = true;
-        SteamP2PManager.GameStartTime = DateTime.UtcNow;
-        SceneManager.LoadScene(2);
-    }
-    public unsafe void OnReadyClicked()
-    {
-        isReady = !isReady;
-
-        byte* msg = (byte*)UnsafeUtility.Malloc(1, 4, Allocator.Temp);
-        msg[0] = (byte)LobbyPacketType.ReadyFlag;
-        SteamP2PManager.Instance.SendToAllUnManagedUnsafe((IntPtr)msg, 1, reliable: true);
     }
 }

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Newtonsoft.Json.Bson;
+using Mirror;
 using Steamworks;
 using UnityEngine;
-using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 public class SteamLobbyManager : MonoBehaviour
 {
@@ -17,6 +17,10 @@ public class SteamLobbyManager : MonoBehaviour
     public static CSteamID CurrentLobbyID;
     public static bool Initialized { get; private set; } = false;
     public Dictionary<CSteamID, bool> clientReadyStates = new();
+
+    private NetworkManager networkManager;
+    private const string HostAddressKey = "HostAddress";
+    public GameObject playerPrefab;
 
     private void Awake()
     {
@@ -37,12 +41,18 @@ public class SteamLobbyManager : MonoBehaviour
         _joinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnJoinRequested);
         _lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
         _onJoinViaRichPresence = Callback<GameRichPresenceJoinRequested_t>.Create(OnJoinViaRichPresence);
+        networkManager = FindFirstObjectByType<NetworkManager>();
         InitMainMenu();
+        if (!SteamManager.Initialized)
+        {
+            Debug.LogError("SteamManager not initialized");
+            return; 
+        }
     }
 
     public void HostLobby()
     {
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, 4);
+        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
     }
 
     private void OnLobbyCreated(LobbyCreated_t callback)
@@ -59,16 +69,10 @@ public class SteamLobbyManager : MonoBehaviour
         CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
 
         // Set host Steam ID in lobby metadata
-        SteamMatchmaking.SetLobbyData(CurrentLobbyID, "hostid", SteamUser.GetSteamID().ToString());
-
-        SteamP2PManager.Instance.isHost = true;
-        SteamP2PManager.Instance.StartHost();
+        networkManager.StartHost();
+        SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey, SteamUser.GetSteamID().ToString());
         SteamFriends.SetRichPresence("connect", CurrentLobbyID.ToString());
         SteamFriends.SetRichPresence("status", "In Lobby");
-
-        Debug.Log($"host flag = {SteamP2PManager.Instance.isHost}");
-        mainMenu.readyButton.SetActive(!SteamP2PManager.Instance.isHost);
-        mainMenu.startButton.SetActive(SteamP2PManager.Instance.isHost);
 
         steamLobbyUIManager.RefreshPlayerList();
     }
@@ -91,31 +95,28 @@ public class SteamLobbyManager : MonoBehaviour
     private void OnLobbyEntered(LobbyEnter_t callback)
     {
         Debug.Log("Lobby entered");
+        if (NetworkServer.active && NetworkClient.isConnected) 
+        {
+            mainMenu.startButton.SetActive(true);
+            return; 
+        }
+        Debug.Log("Lobby entered as client");
 
         CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
 
-        if (!SteamP2PManager.Instance.isHost)
+        if (!NetworkServer.active)
         {
             if (steamLobbyUIManager == null)
                 steamLobbyUIManager = FindFirstObjectByType<SteamLobbyUIManager>();
-            mainMenu.readyButton.SetActive(!SteamP2PManager.Instance.isHost);
-            mainMenu.startButton.SetActive(SteamP2PManager.Instance.isHost);
+
             mainMenu.ShowLobbyMenu();
             if (mainMenu.MainMenu.activeSelf)
                 mainMenu.ToggleMenu();
             steamLobbyUIManager.RefreshPlayerList();
-            // Get the host Steam ID from lobby metadata
-            string hostIdStr = SteamMatchmaking.GetLobbyData(CurrentLobbyID, "hostid");
-            if (ulong.TryParse(hostIdStr, out ulong hostId))
-            {
-                CSteamID hostSteamID = new(hostId);
-                SteamP2PManager.Instance.ConnectToHost(hostSteamID);
-                SteamP2PManager.Instance.isHost = false;
-            }
-            else
-            {
-                Debug.LogError("Failed to parse host Steam ID from lobby");
-            }
+
+            string hostAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey);
+            networkManager.networkAddress = hostAddress;
+            networkManager.StartClient();
         }
     }
     public void LeaveLobby()
@@ -123,22 +124,34 @@ public class SteamLobbyManager : MonoBehaviour
         if (SteamLobbyManager.CurrentLobbyID.IsValid())
         {
             Debug.Log("Leaving lobby...");
+            if (NetworkServer.active)
+                networkManager.StopHost();
+            else
+                networkManager.StopClient();
             SteamMatchmaking.LeaveLobby(SteamLobbyManager.CurrentLobbyID);
             SteamLobbyManager.CurrentLobbyID = CSteamID.Nil;
         }
-
-        // If host, also shut down the listen socket
-        if (SteamP2PManager.Instance.isHost)
-        {
-            SteamP2PManager.Instance.DisconnectAllClients();
-            SteamP2PManager.Instance.isHost = false;
-            SteamP2PManager.Instance.clientLobbyJoinTimes.Clear();
-            clientReadyStates.Clear();
-        }
-        else
-            SteamP2PManager.Instance.DisconnectFromHost();
-
         if (steamLobbyUIManager != null)
             steamLobbyUIManager.ClearPlayerList();
     }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log($"Scene Loaded: {scene.buildIndex}");
+        if (scene.buildIndex == 1)
+        {
+            SteamLobbyManager.Instance.InitMainMenu();
+        }
+    }
+
 }

@@ -1,12 +1,21 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
+using System.Collections;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {    
     [Header("References")]
     [SerializeField] private CharacterController charController;
 
+    [Header("Camera Reference")]
+    [SerializeField] private Transform playerBody;
+    [SerializeField] private Transform playerCamera;
+
+    [Header("Pitch Settings")]
+    [SerializeField] private float minPitch = -80f;
+    [SerializeField] private float maxPitch = 80f;
 
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed;
@@ -28,26 +37,71 @@ public class PlayerController : MonoBehaviour
 
     private readonly float groundDistance = 0.4f;
     private Vector3 velocity;
-    private Rigidbody heldObject;
+    private PickableObject heldObject;
     private Camera playerCam;
-    
+    AudioListener listener;
+
+
     private PlayerInput input;
     private InputAction moveAction;
     private InputAction sprintAction;
     private InputAction jumpAction;
+
+    private Vector2 lookInput = Vector2.zero;
+    private float pitch = 0f;
 
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
         playerCam = GetComponentInChildren<Camera>();
         input = GetComponent<PlayerInput>();
+        listener = playerCam.GetComponent<AudioListener>();
+
         moveAction = input.actions["Move"];
         sprintAction = input.actions["Sprint"];
         jumpAction = input.actions["Jump"];
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+        Debug.Log($"[PlayerController] Local player started: {netId}, isLocalPlayer={isLocalPlayer}");
+
+        EnableLocalPlayer();
+        StartCoroutine(AssignUIManagerWhenReady());
+    }
+
+    private IEnumerator AssignUIManagerWhenReady()
+    {
+        UIManager uiManager = null;
+        while (uiManager == null)
+        {
+            uiManager = FindFirstObjectByType<UIManager>();
+            yield return null;
+        }
+
+        uiManager.playerInput = GetComponent<PlayerInput>();
+    }
+
+    private void EnableLocalPlayer()
+    {
+        LockCursor(true);
+        if (playerCam != null)
+            playerCam.enabled = true;
+        if (input != null)
+            input.enabled = true;
+        if (listener != null) 
+            listener.enabled = true;
+    }
+    public void LockCursor(bool locked)
+    {
+        Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !locked;
+    }
+
     private void Update()
     {
+        if (!isLocalPlayer) { return; }
         Vector2 moveInput = moveAction.ReadValue<Vector2>();
         bool isSprinting = sprintAction.IsPressed();
 
@@ -71,6 +125,19 @@ public class PlayerController : MonoBehaviour
         }
 
         charController.Move(velocity * Time.deltaTime);
+
+        // Apply sensitivity
+        float mouseX = lookInput.x * 0.5f;
+        float mouseY = lookInput.y * 0.5f;
+
+        // Horizontal rotation
+        playerBody.Rotate(Vector3.up * mouseX);
+
+        // Vertical rotation
+        pitch -= mouseY;
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+
+        playerCamera.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
 
     private bool IsGrounded()
@@ -81,35 +148,45 @@ public class PlayerController : MonoBehaviour
             return false;
     }
 
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        if (!isLocalPlayer) { return; }
+        lookInput = context.ReadValue<Vector2>();
+    }
+
     public void OnGrab(InputAction.CallbackContext ctx)
     {
+        if (!isLocalPlayer) { return; }
         if (!ctx.performed) return;
         if (heldObject != null) return;
 
         if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, grabDistance, grabMask))
         {
-            if (Hit.rigidbody != null)
+            if (Hit.collider.TryGetComponent(out PickableObject pickable))
             {
-                heldObject = Hit.rigidbody;
-                heldObject.isKinematic = true;
-                heldObject.transform.SetParent(grabPoint);
-                heldObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                CmdAssignAuthority(pickable.netIdentity);
+                pickable.transform.SetParent(grabPoint);
+                pickable.transform.localPosition = Vector3.zero;
+
+                heldObject = pickable;
             }
         }
     }
 
     public void OnDrop(InputAction.CallbackContext ctx)
     {
+        if (!isLocalPlayer) { return; }
         if (!ctx.performed) return;
         if (heldObject == null) return;
 
+        CmdRemoveAuthority(heldObject.netIdentity);
         heldObject.transform.SetParent(null);
-        heldObject.isKinematic = false;
         heldObject = null;
     }
 
     public void InteractClick(InputAction.CallbackContext ctx)
     {
+        if (!isLocalPlayer) { return; }
         if (!ctx.performed) return;
         if (heldObject != null) return;
 
@@ -120,33 +197,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private PlayerState GetNetworkState()
+    [Command]
+    void CmdAssignAuthority(NetworkIdentity obj)
     {
-        return new PlayerState
-        {
-            position = transform.position,
-            forward = transform.forward,
+        if (obj.connectionToClient != null)
+            obj.RemoveClientAuthority();
 
-            //pitch = _playerInput.y,
-            //yaw = _playerInput.x,
-
-            //moveInput = _movementComponent.AnimatorVelocity,
-
-            //Health = health,
-
-            //movementState = (global::FPSMovementState)_movementComponent.MovementState,
-            //poseState = (global::FPSPoseState)_movementComponent.PoseState,
-            //aimState = _aimState,
-            //actionState = _actionState,
-
-            //activeWeaponIndex = (byte)_activeWeaponIndex,
-        };
+        obj.AssignClientAuthority(connectionToClient);
     }
-    void FixedUpdate()
+
+    [Command]
+    void CmdRemoveAuthority(NetworkIdentity obj)
     {
-        PlayerState state = GetNetworkState();
-        IntPtr data = PlayerStateSerializer.Serialize(state, SteamP2PManager.Instance.Own_ID, out int playerStateLength);
-        SteamP2PManager.Instance.SendToAllUnManagedUnsafe(data, (uint)playerStateLength, reliable: false);
+        obj.RemoveClientAuthority();
     }
 }
 
