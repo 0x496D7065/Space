@@ -164,11 +164,8 @@ public class PlayerController : NetworkBehaviour
         {
             if (Hit.collider.TryGetComponent(out PickableObject pickable))
             {
-                CmdAssignAuthority(pickable.netIdentity);
-                pickable.transform.SetParent(grabPoint);
-                pickable.transform.localPosition = Vector3.zero;
-
                 heldObject = pickable;
+                StartCoroutine(WaitForAuthorityAndAttach(pickable));
             }
         }
     }
@@ -179,9 +176,7 @@ public class PlayerController : NetworkBehaviour
         if (!ctx.performed) return;
         if (heldObject == null) return;
 
-        CmdRemoveAuthority(heldObject.netIdentity);
-        heldObject.transform.SetParent(null);
-        heldObject = null;
+        StartCoroutine(WaitForAuthorityAndDrop(heldObject));
     }
 
     public void InteractClick(InputAction.CallbackContext ctx)
@@ -210,6 +205,39 @@ public class PlayerController : NetworkBehaviour
     void CmdRemoveAuthority(NetworkIdentity obj)
     {
         obj.RemoveClientAuthority();
+    }
+
+    private IEnumerator WaitForAuthorityAndAttach(PickableObject pickable)
+    {
+        CmdAssignAuthority(pickable.netIdentity);
+
+        float timeout = 2f; // max wait 2 seconds
+        float elapsed = 0f;
+
+        while (!pickable.isOwned && elapsed < timeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (!pickable.isOwned)
+        {
+            Debug.LogWarning("Failed to gain authority over pickable.");
+            heldObject = null;
+            yield break;
+        }
+
+        pickable.transform.SetParent(grabPoint);
+        pickable.transform.localPosition = Vector3.zero;
+    }
+    private IEnumerator WaitForAuthorityAndDrop(PickableObject pickable)
+    {
+        pickable.transform.SetParent(null);
+        heldObject.GetComponent<Rigidbody>().isKinematic = false;
+        heldObject = null;
+
+        //CmdRemoveAuthority(pickable.netIdentity);
+        yield return null;
     }
 }
 

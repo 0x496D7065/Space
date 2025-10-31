@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2818372696180998169}
   - component: {fileID: 8917385557013663215}
   - component: {fileID: 8736836361621373217}
-  - component: {fileID: 4572248136779976785}
+  - component: {fileID: 6694962417732233990}
   - component: {fileID: 1485337384907776053}
   m_Layer: 11
   m_Name: Pickable
@@ -156,7 +156,7 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &4572248136779976785
+--- !u!114 &6694962417732233990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -173,21 +173,21 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.05
   target: {fileID: 3929562077434280713}
-  updateMethod: 1
+  updateMethod: 0
   syncPosition: 1
   syncRotation: 1
   syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
+  onlySyncOnChange: 0
+  compressRotation: 0
   interpolatePosition: 1
   interpolateRotation: 1
-  interpolateScale: 1
+  interpolateScale: 0
   coordinateSpace: 1
   timelineOffset: 1
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
+  onlySyncOnChangeCorrectionMultiplier: 5
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01

@@ -12,19 +12,16 @@ public class PickableObject : NetworkBehaviour
 
     public override void OnStartAuthority()
     {
+        Debug.LogWarning("OnStartAuthorityCube");
         rb.isKinematic = true;
-    }
-
-    public override void OnStopAuthority()
-    {
-        rb.isKinematic = false;
     }
 
     public override void OnStartClient()
     {
         if (!isOwned)
         {
-            rb.isKinematic=true;
+            Debug.LogWarning("OnStartClientCube");
+            //rb.isKinematic = false;
         }
     }
 }
