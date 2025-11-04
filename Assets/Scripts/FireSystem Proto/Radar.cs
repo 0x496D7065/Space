@@ -12,8 +12,10 @@ public class Radar : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Trigger entered");
         if (other.GetComponent<DetectableObject>())
         {
+            Debug.Log("Detectable Object found");
             other.GetComponent<DetectableObject>().Detected();
         }
     }

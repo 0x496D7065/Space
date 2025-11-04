@@ -22,27 +22,32 @@ public class DialButton : Interactable
     [Header("Reference to Azimuth Controller")]
     [SerializeField] private AzimuthController azimuthController;
 
+    //public override void Interact()
+    //{
+    //    switch (dialDigitType)
+    //    {
+    //        case DialDigitType.Hundreds:
+    //            UpdateDigit(azimuthController.digitHundreds);
+    //            break;
+    //        case DialDigitType.Tens:
+    //            UpdateDigit(azimuthController.digitTens);
+    //            break;
+    //        case DialDigitType.Units:
+    //            UpdateDigit(azimuthController.digitUnits);
+    //            break;
+    //    }
+    //}
     public override void Interact()
     {
-        switch (dialDigitType)
-        {
-            case DialDigitType.Hundreds:
-                UpdateDigit(azimuthController.digitHundreds);
-                break;
-            case DialDigitType.Tens:
-                UpdateDigit(azimuthController.digitTens);
-                break;
-            case DialDigitType.Units:
-                UpdateDigit(azimuthController.digitUnits);
-                break;
-        }
+        int delta = (dialDirection == DialDirection.Up) ? 1 : -1;
+        azimuthController.CmdChangeDigit(dialDigitType, delta);
     }
 
-    private void UpdateDigit(DialDigit dialDigit)
-    {
-        if (dialDirection == DialDirection.Up)
-            dialDigit.Increment();
-        else
-            dialDigit.Decrement();
-    }
+    //private void UpdateDigit(DialDigit dialDigit)
+    //{
+    //    if (dialDirection == DialDirection.Up)
+    //        dialDigit.Increment();
+    //    else
+    //        dialDigit.Decrement();
+    //}
 }

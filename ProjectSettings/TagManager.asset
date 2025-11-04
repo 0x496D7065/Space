@@ -42,6 +42,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 2143857281
+    locked: 0
+  - name: OverRadar
+    uniqueID: 3804648465
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1

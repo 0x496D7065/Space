@@ -1,6 +1,7 @@
 using UnityEngine;
+using Mirror;
 
-public class DetectableObject : MonoBehaviour
+public class DetectableObject : NetworkBehaviour
 {
     [SerializeField] private Animator anim;
 

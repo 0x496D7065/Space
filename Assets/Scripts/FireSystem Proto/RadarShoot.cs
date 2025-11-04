@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 public class RadarShoot : MonoBehaviour
@@ -19,14 +20,10 @@ public class RadarShoot : MonoBehaviour
     {
         Vector2 direction = AzimuthToDirection(azimuth);
         GameObject missile = Instantiate(missilePrefab, radarCenter);
+        NetworkServer.Spawn(missile);
         Missile missileScript = missile.GetComponent<Missile>();
-        missileScript.Init(direction, azimuth);
+        missileScript.Init(direction, azimuth, radarCenter);
 
-        RectTransform missileRT = missile.GetComponent<RectTransform>();
-        RectTransform centerRT = radarCenter.GetComponent<RectTransform>();
-
-        // Spawn at center of radar
-        missileRT.anchoredPosition = centerRT.anchoredPosition;
         Debug.Log($"Azimuth: {azimuth} Direction: {direction}");
     }
 

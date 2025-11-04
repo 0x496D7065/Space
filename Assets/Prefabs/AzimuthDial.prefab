@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   digitText: {fileID: 7183631968198229904}
+  value: 0
 --- !u!1 &592973098679838554
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,6 +244,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9405aaed16b28448ffaf929f2da2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   dialDigitType: 2
   dialDirection: 1
   azimuthController: {fileID: 2172949081443162350}
@@ -371,6 +376,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29adad6cf27905244aee68d6370a09e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   radarShoot: {fileID: 0}
 --- !u!1 &1472376944496872236
 GameObject:
@@ -490,6 +499,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   digitText: {fileID: 6045572916621706271}
+  value: 0
 --- !u!1 &2389524195398602909
 GameObject:
   m_ObjectHideFlags: 0
@@ -615,6 +625,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9405aaed16b28448ffaf929f2da2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   dialDigitType: 0
   dialDirection: 0
   azimuthController: {fileID: 2172949081443162350}
@@ -736,6 +750,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   digitText: {fileID: 5492927301962109033}
+  value: 0
 --- !u!1 &3789382747082167755
 GameObject:
   m_ObjectHideFlags: 0
@@ -861,6 +876,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9405aaed16b28448ffaf929f2da2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   dialDigitType: 1
   dialDirection: 1
   azimuthController: {fileID: 2172949081443162350}
@@ -1125,6 +1144,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9405aaed16b28448ffaf929f2da2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   dialDigitType: 1
   dialDirection: 0
   azimuthController: {fileID: 2172949081443162350}
@@ -1274,6 +1297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3628917571411638972}
   - component: {fileID: 2172949081443162350}
+  - component: {fileID: 8950969032081824279}
   m_Layer: 0
   m_Name: AzimuthDial
   m_TagString: Untagged
@@ -1312,10 +1336,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd3fcca079498e84587ce7e4beabd180, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   digitHundreds: {fileID: 8931266538910621779}
   digitTens: {fileID: 1247981490638111287}
   digitUnits: {fileID: 424808571918712533}
   radarShoot: {fileID: 0}
+  hundreds: 0
+  tens: 0
+  units: 0
+--- !u!114 &8950969032081824279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7075974380903801732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 3668541568
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &7619579897501987597
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,6 +1489,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9405aaed16b28448ffaf929f2da2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   dialDigitType: 2
   dialDirection: 0
   azimuthController: {fileID: 2172949081443162350}
@@ -1705,6 +1757,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9405aaed16b28448ffaf929f2da2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   dialDigitType: 0
   dialDirection: 1
   azimuthController: {fileID: 2172949081443162350}

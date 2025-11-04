@@ -1,7 +1,8 @@
 using UnityEngine;
+using Mirror;
 using TMPro;
 
-public class AzimuthController : MonoBehaviour
+public class AzimuthController : NetworkBehaviour
 {
     [Header("References")]
     public DialDigit digitHundreds;
@@ -10,42 +11,91 @@ public class AzimuthController : MonoBehaviour
 
     [SerializeField] private RadarShoot radarShoot;
 
+    [SyncVar(hook = nameof(OnHundredsChanged))] public int hundreds;
+    [SyncVar(hook = nameof(OnTensChanged))] public int tens;
+    [SyncVar(hook = nameof(OnUnitsChanged))] public int units;
 
+    //private void Start()
+    //{
+    //    digitHundreds.OnValueChanged += UpdateDigitConstraints;
+    //    digitTens.OnValueChanged += UpdateDigitConstraints;
+    //    digitUnits.OnValueChanged += UpdateDigitConstraints;
 
-    private void Start()
+    //    UpdateDigitConstraints();
+    //}
+
+    #region SyncVar Hooks
+    void OnHundredsChanged(int oldVal, int newVal)
     {
-        digitHundreds.OnValueChanged += UpdateDigitConstraints;
-        digitTens.OnValueChanged += UpdateDigitConstraints;
-        digitUnits.OnValueChanged += UpdateDigitConstraints;
-
-        UpdateDigitConstraints();
+        digitHundreds.SetValue(newVal);
+        UpdateAzimuth();
     }
 
-    private void UpdateDigitConstraints()
+    void OnTensChanged(int oldVal, int newVal)
     {
-        // Hundreds can only be 0–3
-        digitHundreds.SetConstraints(0, 3);
+        digitTens.SetValue(newVal);
+        UpdateAzimuth();
+    }
 
-        // If hundreds == 3, tens must be 0–5, else 0–9
-        if (digitHundreds.value == 3)
+    void OnUnitsChanged(int oldVal, int newVal)
+    {
+        digitUnits.SetValue(newVal);
+        UpdateAzimuth();
+    }
+    #endregion
+
+    //private void UpdateDigitConstraints()
+    //{
+    //    // Hundreds can only be 0–3
+    //    digitHundreds.SetConstraints(0, 3);
+
+    //    // If hundreds == 3, tens must be 0–5, else 0–9
+    //    if (digitHundreds.value == 3)
+    //    {
+    //        digitTens.SetConstraints(0, 5);
+    //    }
+    //    else
+    //    {
+    //        digitTens.SetConstraints(0, 9);
+    //    }
+        
+    //    // Units always 0–9
+    //    digitUnits.SetConstraints(0, 9);
+
+    //    // Combine digits
+    //    int azimuth = digitHundreds.value * 100 + digitTens.value * 10 + digitUnits.value;
+    //    if (isServer)
+    //        radarShoot.azimuth = azimuth;
+    //}
+
+    [Command(requiresAuthority = false)]
+    public void CmdChangeDigit(DialDigitType type, int delta)
+    {
+        switch (type)
         {
-            digitTens.SetConstraints(0, 5);
-        }
-        else
-        {
-            digitTens.SetConstraints(0, 9);
-        }
+            case DialDigitType.Hundreds:
+                hundreds = Mathf.Clamp(hundreds + delta, 0, 3);
+                break;
 
-        // Units always 0–9
-        digitUnits.SetConstraints(0, 9);
+            case DialDigitType.Tens:
+                int maxTens = (hundreds == 3) ? 5 : 9;
+                tens = Mathf.Clamp(tens + delta, 0, maxTens);
+                break;
 
-        // Combine digits
-        int azimuth = digitHundreds.value * 100 + digitTens.value * 10 + digitUnits.value;
-        radarShoot.azimuth = azimuth;
+            case DialDigitType.Units:
+                units = Mathf.Clamp(units + delta, 0, 9);
+                break;
+        }
+        if (hundreds == 3 && tens > 5)
+            tens = 5;
     }
 
     public int GetAzimuth()
     {
-        return digitHundreds.value * 100 + digitTens.value * 10 + digitUnits.value;
+        return hundreds * 100 + tens * 10 + units;
+    }
+    private void UpdateAzimuth()
+    {
+        radarShoot.azimuth = GetAzimuth();
     }
 }

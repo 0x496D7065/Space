@@ -1,8 +1,7 @@
-using CitrioN.Common;
-using Newtonsoft.Json.Bson;
 using UnityEngine;
+using Mirror;
 
-public class Missile : MonoBehaviour
+public class Missile : NetworkBehaviour
 {
 
     [SerializeField] private float speed;
@@ -12,35 +11,35 @@ public class Missile : MonoBehaviour
     [SerializeField] private LayerMask enemyLayer;
 
     private Vector2 direction;
-    private RectTransform rt;
-    private Vector2 startPos;
+    private Transform startPos;
+    private bool init = false;
 
-    private void Awake()
-    {
-        rt = GetComponent<RectTransform>();
-    }
-
-    public void Init(Vector2 dir, float azimuth)
+    public void Init(Vector2 dir, float azimuth, Transform radarCenter)
     {
         direction = dir.normalized;
         transform.rotation = Quaternion.Euler(0, 0, azimuth + 90);
-        startPos = transform.position;
+        startPos = radarCenter;
+        init = true;
     }
 
     private void Update()
     {
+        if (!isServer || !init) return;
         transform.position += (Vector3)(speed * Time.deltaTime * direction);
-        Debug.Log($"Distance: {Vector2.Distance(transform.position, startPos)}");
-        if (Vector2.Distance(transform.position, startPos) > maxDistance)
-            Destroy(this.gameObject);
+        Debug.Log($"Distance: {Vector2.Distance(transform.position, startPos.position)}");
+        if (Vector2.Distance(transform.position, startPos.position) > maxDistance)
+            NetworkServer.Destroy(this.gameObject);
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Ship>())
+        if (!isServer) return;
+
+        other.TryGetComponent<Ship>(out var ship);
+        if (ship != null)
         {
-            other.GetComponent<Ship>().TakeDamage(damage);
-            Destroy(this.gameObject);
+            ship.TakeDamage(damage);
+            NetworkServer.Destroy(this.gameObject);
         }
     }
 }

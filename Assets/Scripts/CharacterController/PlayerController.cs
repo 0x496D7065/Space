@@ -3,9 +3,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 using System.Collections;
+using Unity.Mathematics;
 
 public class PlayerController : NetworkBehaviour
-{    
+{
     [Header("References")]
     [SerializeField] private CharacterController charController;
 
@@ -90,7 +91,7 @@ public class PlayerController : NetworkBehaviour
             playerCam.enabled = true;
         if (input != null)
             input.enabled = true;
-        if (listener != null) 
+        if (listener != null)
             listener.enabled = true;
     }
     public void LockCursor(bool locked)
@@ -174,7 +175,6 @@ public class PlayerController : NetworkBehaviour
     {
         if (!isLocalPlayer) { return; }
         if (!ctx.performed) return;
-        if (heldObject == null) return;
 
         StartCoroutine(WaitForAuthorityAndDrop(heldObject));
     }
@@ -182,8 +182,7 @@ public class PlayerController : NetworkBehaviour
     public void InteractClick(InputAction.CallbackContext ctx)
     {
         if (!isLocalPlayer) { return; }
-        if (!ctx.performed) return;
-        if (heldObject != null) return;
+        if (!ctx.performed) { return; }
 
         if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
         {
@@ -191,7 +190,6 @@ public class PlayerController : NetworkBehaviour
                 component.Interact();
         }
     }
-
     [Command]
     void CmdAssignAuthority(NetworkIdentity obj)
     {
