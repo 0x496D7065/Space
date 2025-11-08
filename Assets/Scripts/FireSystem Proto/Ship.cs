@@ -12,9 +12,19 @@ public class Ship : DetectableObject
 
     private float currentAngle = 0f;
     private bool isDead = false;
+    private bool init = false;
+
+    public void Init(Transform center, float radius, float speed)
+    {
+        radarCenter = center;
+        orbitRadius = radius;
+        orbitSpeed = speed;
+        init = true;
+    }
 
     private void Update()
     {
+        if (!init || !isServer) { return; }
         currentAngle += orbitSpeed * Time.deltaTime;
         currentAngle %= 360f;
 
@@ -24,10 +34,7 @@ public class Ship : DetectableObject
     }
     public void TakeDamage(float damage)
     {
-        Debug.Log($"hit test");
-        if (!isServer) return;
-        Debug.Log($"server is ok");
-        if (isDead) return;
+        if (!isServer || isDead) return;
 
         health -= damage;
         if (health <= 0)
@@ -39,18 +46,18 @@ public class Ship : DetectableObject
         {
             //NetworkServer.Destroy(this.gameObject);
             //this is temporary fix until enemy ships have logic to spawn on server instead of already being in the scene
-            if (isServer)
-            {
-                Destroy(this.gameObject);
-                RpcDestroyOnClients();
-            }
-            Debug.Log($"NetworkServer.Destroy() called");
+            //if (isServer)
+            //{
+            //    Destroy(this.gameObject);
+            //    RpcDestroyOnClients();
+            //}
+            EnemyManager.Instance.RemoveEnemy(this);
         }
     }
-    [ClientRpc]
-    void RpcDestroyOnClients()
-    {
-        if (!isServer) // server already did it
-            Destroy(this.gameObject);
-    }
+    //[ClientRpc]
+    //void RpcDestroyOnClients()
+    //{
+    //    if (!isServer) // server already did it
+    //        Destroy(this.gameObject);
+    //}
 }

@@ -26,7 +26,7 @@ public class Missile : NetworkBehaviour
     {
         if (!isServer || !init) return;
         transform.position += (Vector3)(speed * Time.deltaTime * direction);
-        Debug.Log($"Distance: {Vector2.Distance(transform.position, startPos.position)}");
+        //Debug.Log($"Distance: {Vector2.Distance(transform.position, startPos.position)}");
         if (Vector2.Distance(transform.position, startPos.position) > maxDistance)
             NetworkServer.Destroy(this.gameObject);
     }
