@@ -7,6 +7,9 @@ public class SteamworkManager : NetworkManager
     [Header("Scene Names")]
     public string gameplayScene = "DevTestScene";
 
+    public Transform[] spawnPossibility;
+    private int playerOrder = 0;
+
     public override void OnServerSceneChanged(string scene)
     {
         base.OnServerSceneChanged(scene);
@@ -32,7 +35,21 @@ public class SteamworkManager : NetworkManager
 
         if (SceneManager.GetActiveScene().name == gameplayScene && conn.identity == null)
         {
+            playerOrder++;
+
             GameObject player = Instantiate(playerPrefab);
+
+            try
+            {
+                player.transform.position = spawnPossibility[playerOrder - 1].position;
+            }
+            catch (System.Exception)
+            {
+                Debug.LogError("No Spawn Possibility");
+            }
+
+            player.name = "Player " + playerOrder;
+
             NetworkServer.AddPlayerForConnection(conn, player);
             Debug.Log($"[Server] Player spawned for connection {conn.connectionId} / {player.name}");
         }
