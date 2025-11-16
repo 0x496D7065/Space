@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 using static UnityEngine.UI.Image;
@@ -13,13 +15,28 @@ public class FireNode : NetworkBehaviour, IExtinguishable
     [SerializeField] private float burnTime = 10f;
     [SerializeField] private float spreadDelay = 3f;
     [SerializeField] private float spreadRadius = 2f;
+    [SerializeField] private int minSpreadDirections = 1;
+    [SerializeField] private int maxSpreadDirections = 3;
+    [SerializeField] private float chanceToSpread = 0.3f;
     [SerializeField] private LayerMask spreadLayer;
+    [SerializeField] private LayerMask fireMask;
+
 
     [Header("Extinguish Settings")]
     [SerializeField] private float extinguishProgress = 0f;
     [SerializeField] private float extinguishThreshold = 3f;
 
     private bool isBurning = true;
+
+    private static readonly Vector3[] spreadDirs = new Vector3[]
+    {
+        Quaternion.AngleAxis(0, Vector3.forward) * Vector3.right,
+        Quaternion.AngleAxis(60, Vector3.forward) * Vector3.right,
+        Quaternion.AngleAxis(120, Vector3.forward) * Vector3.right,
+        Quaternion.AngleAxis(180, Vector3.forward) * Vector3.right,
+        Quaternion.AngleAxis(240, Vector3.forward) * Vector3.right,
+        Quaternion.AngleAxis(300, Vector3.forward) * Vector3.right,
+    };
 
     public void Initialize(GameObject prefabRef)
     {
@@ -40,113 +57,88 @@ public class FireNode : NetworkBehaviour, IExtinguishable
         }
     }
 
-    //[Server]
-    //void TrySpread()
-    //{
-    //    if (!isBurning) return;
-
-    //    int spreadAttempts = 6;
-    //    Vector3 normal = transform.forward;
-    //    Vector3 center = transform.position + normal * 0.5f;
-
-
-
-    //    Vector3 tangent = Vector3.Cross(normal, Vector3.up);
-    //    if (tangent.sqrMagnitude < 0.01f)
-    //        tangent = Vector3.Cross(normal, Vector3.right);
-
-    //    tangent.Normalize();
-    //    Vector3 bitangent = Vector3.Cross(normal, tangent).normalized;
-
-
-
-
-    //    for (int i = 0; i < spreadAttempts; i++)
-    //    {
-    //        float angle = i * (360f / spreadAttempts) * Mathf.Deg2Rad;
-    //        Vector3 radialOffset = Mathf.Cos(angle) * tangent + Mathf.Sin(angle) * bitangent;
-    //        Vector3 radialPoint = center + radialOffset * spreadRadius;
-
-    //        Ray rayCast = new Ray(radialPoint, -normal);
-    //        Debug.DrawRay(radialPoint, -normal, Color.blue, 2);
-
-    //        if (Physics.Raycast(rayCast, out RaycastHit hit, spreadRadius))
-    //        {
-    //            Vector3 spawnPos = hit.point + hit.normal * 0.01f;
-    //            Quaternion spawnRot = Quaternion.LookRotation(hit.normal);
-
-    //            Collider[] overlap = Physics.OverlapSphere(spawnPos, 0.5f);
-    //            bool fireAlreadyThere = false;
-    //            foreach (var col in overlap)
-    //            {
-    //                if (col.GetComponent<FireNode>())
-    //                {
-    //                    fireAlreadyThere = true;
-    //                    break;
-    //                }
-    //            }
-    //            if (fireAlreadyThere) continue;
-
-    //            GameObject newFire = Instantiate(fireNodePrefab, spawnPos, spawnRot);
-    //            newFire.GetComponent<FireNode>().Initialize(fireNodePrefab);
-    //            NetworkServer.Spawn(newFire);
-    //        }
-    //    }
-
-    //    Invoke(nameof(TrySpread), spreadDelay);
-    //}
-
     [Server]
-    void TrySpread()
+    private void TrySpread()
     {
-        if (!isBurning) return;
+        Collider[] nearbyFires = Physics.OverlapSphere(transform.position, spreadRadius, fireMask);
+        List<int> freeIndices = GetFreeDirectionIndices(nearbyFires);
+        List<int> chosenDirs = PickSpreadDirections(freeIndices);
 
-        Vector3 normal = transform.forward; // this is our stored surface normal
-        Vector3 center = transform.position + normal * 0.5f;
-        int pointCount = 6;
-
-        // Tangent basis to generate 2D directions
-        Vector3 tangent = Vector3.Cross(normal, Vector3.up);
-        if (tangent.sqrMagnitude < 0.01f)
-            tangent = Vector3.Cross(normal, Vector3.forward);
-        tangent.Normalize();
-        Vector3 bitangent = Vector3.Cross(normal, tangent).normalized;
-
-        for (int i = 0; i < pointCount; i++)
+        foreach (int i in chosenDirs)
         {
-            float angle = i * (360f / pointCount) * Mathf.Deg2Rad;
-            Vector3 radialDir = Mathf.Cos(angle) * tangent + Mathf.Sin(angle) * bitangent;
-            Vector3 spreadOrigin = center;
+            Vector3 spreadDir = transform.TransformDirection(spreadDirs[i]);
+            Vector3 origin = transform.position + transform.forward * 1f;
 
-            bool spreadSuccess = false;
-
-            // First, try direct raycast outward from fire center
-            Ray outwardRay = new Ray(spreadOrigin, radialDir);
-            Debug.DrawRay(spreadOrigin, radialDir * spreadRadius, Color.blue, 2f);
-
-            if (Physics.Raycast(outwardRay, out RaycastHit outwardHit, spreadRadius, spreadLayer))
+            if (Random.value > chanceToSpread)
             {
-                spreadSuccess = TrySpawnFireAt(outwardHit.point, outwardHit.normal);
-                //Debug.Log("Hit: " + outwardHit.collider.name);
+                Debug.DrawRay(origin, spreadDir * spreadRadius, Color.green, 2f);
+                continue;
             }
-            //else
-                //Debug.Log("Missed everything");
 
-            // If no surface hit, try projecting downward onto the same surface
-            if (!spreadSuccess)
+            Ray outwardRay = new Ray(origin, spreadDir);
+            Debug.DrawRay(origin, spreadDir * spreadRadius, Color.blue, 2f);
+            if (Physics.Raycast(outwardRay, out RaycastHit hit, spreadRadius, spreadLayer))
             {
-                Vector3 fallbackPoint = center + radialDir * spreadRadius;
-                Ray fallbackRay = new Ray(fallbackPoint, -normal); // down towards surface
-                Debug.DrawRay(fallbackPoint, -normal * 1.5f, Color.cyan, 2f);
-
-                if (Physics.Raycast(fallbackRay, out RaycastHit downHit, 1.5f, spreadLayer))
+                TrySpawnFireAt(hit.point, hit.normal);
+            }
+            else
+            {
+                Ray downwardRay = new Ray(origin + spreadDir * spreadRadius, -transform.forward);
+                Debug.DrawRay(origin + spreadDir * spreadRadius, -transform.forward, Color.blue, 2f);
+                if (Physics.Raycast(downwardRay, out RaycastHit fallbackHit, 1.5f, spreadLayer))
                 {
-                    TrySpawnFireAt(downHit.point, downHit.normal);
+                    TrySpawnFireAt(fallbackHit.point, fallbackHit.normal);
                 }
             }
         }
 
-        //Invoke(nameof(TrySpread), spreadDelay);
+        Invoke(nameof(TrySpread), spreadDelay);
+    }
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, spreadRadius);
+    }
+    List<int> GetFreeDirectionIndices(Collider[] nearbyFires)
+    {
+        List<int> blocked = new();
+
+        foreach (Collider col in nearbyFires)
+        {
+            if (col.TryGetComponent<FireNode>(out var node) && node != this)
+            {
+                Vector3 toOther = (col.transform.position - transform.position).normalized;
+
+                for (int i = 0; i < spreadDirs.Length; i++)
+                {
+                    // Convert local dir to world space
+                    Vector3 dir = transform.TransformDirection(spreadDirs[i]);
+                    float dot = Vector3.Dot(dir, toOther);
+
+                    if (dot > 0.85f) // ~30° tolerance
+                    {
+                        if (!blocked.Contains(i))
+                            blocked.Add(i);
+                    }
+                }
+            }
+        }
+
+        // Now return only the free directions
+        List<int> free = new();
+        for (int i = 0; i < spreadDirs.Length; i++)
+        {
+            if (!blocked.Contains(i))
+                free.Add(i);
+        }
+
+        return free;
+    }
+
+    List<int> PickSpreadDirections(List<int> freeIndices)
+    {
+        int count = Mathf.Min(Random.Range(minSpreadDirections, maxSpreadDirections + 1), freeIndices.Count);
+        return freeIndices.OrderBy(_ => Random.value).Take(count).ToList();
     }
 
     bool TrySpawnFireAt(Vector3 hitPoint, Vector3 hitNormal)
@@ -167,6 +159,26 @@ public class FireNode : NetworkBehaviour, IExtinguishable
         return true;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //Extinguish logic
     [Server]
     public void ApplyExtinguish(float amount)
     {

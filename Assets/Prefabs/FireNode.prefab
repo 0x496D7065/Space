@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7121958091664608761}
   - component: {fileID: 7358381105550572155}
   - component: {fileID: 6806667345930367313}
-  m_Layer: 1
+  m_Layer: 14
   m_Name: FireNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 6115096752780676954}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.63685, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -58,6 +58,11 @@ MonoBehaviour:
   spreadLayer:
     serializedVersion: 2
     m_Bits: 384
+  fireMask:
+    serializedVersion: 2
+    m_Bits: 16384
+  minSpreadDirections: 1
+  maxSpreadDirections: 3
   extinguishProgress: 0
   extinguishThreshold: 3
 --- !u!114 &7358381105550572155
