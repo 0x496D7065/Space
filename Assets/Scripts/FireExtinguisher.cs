@@ -15,17 +15,17 @@ public class FireExtinguisher : Interactable
 
     public override void Interact()
     {
-        Debug.Log("Extinguisher interact");
+        //Debug.Log("Extinguisher interact");
         if (sprayEffect != null && !sprayEffect.isPlaying)
         {
-            Debug.Log("Extinguisher starting");
+            //Debug.Log("Extinguisher starting");
             sprayEffect.Play();
             isSpraying = true;
             CmdToggleSpray(isSpraying);
         }
         else if (sprayEffect.isPlaying)
         {
-            Debug.Log("Extinguisher stopping");
+            //Debug.Log("Extinguisher stopping");
             sprayEffect.Stop();
             isSpraying = false;
             CmdToggleSpray(isSpraying);
