@@ -9,6 +9,7 @@ public class PlayerController : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] private CharacterController charController;
+    [SerializeField] private Rigidbody rb;
 
     [Header("Camera Reference")]
     [SerializeField] private Transform playerBody;
@@ -54,6 +55,7 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
         playerCam = GetComponentInChildren<Camera>();
         input = GetComponent<PlayerInput>();
         listener = playerCam.GetComponent<AudioListener>();
@@ -111,6 +113,7 @@ public class PlayerController : NetworkBehaviour
         float speed = isSprinting ? walkSpeed * sprintMultiplier : walkSpeed;
 
         charController.Move(speed * Time.deltaTime * moveDirection);
+        //rb.MovePosition(rb.position + speed * Time.deltaTime * moveDirection);
 
         if (IsGrounded())
         {
@@ -126,6 +129,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         charController.Move(velocity * Time.deltaTime);
+        //rb.linearVelocity = velocity;
 
         // Apply sensitivity
         float mouseX = lookInput.x * 0.5f;
