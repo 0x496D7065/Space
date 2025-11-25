@@ -2,16 +2,20 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-public class EnemyManager : NetworkBehaviour
+public class GameManager : NetworkBehaviour
 {
-    public static EnemyManager Instance { get; private set; }
+    public static GameManager Instance { get; private set; }
     private readonly List<Ship> enemyList = new();
 
     [Header("Reference")]
     [SerializeField] private Transform radarCenter;
     [SerializeField] private GameObject enemyShipPrefab;
+    [SerializeField] private PlayerShip playerShip;
 
-    [Header("Settings")]
+    [Header("Mission Timer")]
+    [SerializeField] private float missionDuration = 300f;
+
+    [Header("Enemy Settings")]
     [SerializeField] private int maxEnemy;
     [SerializeField] private float spawnRate;
 
@@ -20,7 +24,11 @@ public class EnemyManager : NetworkBehaviour
 
     [SerializeField] private float minSpeed = 5f;
     [SerializeField] private float maxSpeed = 20f;
+
     private float timeElapsed;
+
+    [SyncVar]
+    private double missionStartTime;
 
     private void Awake()
     {
@@ -33,6 +41,29 @@ public class EnemyManager : NetworkBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        playerShip = FindFirstObjectByType<PlayerShip>();
+        if (playerShip == null)
+            Debug.LogError("Could not find PlayerShip script in scene");
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        missionStartTime = NetworkTime.time;
+    }
+
+    public float GetTimeRemaining()
+    {
+        return Mathf.Max(0f, (float)(missionStartTime + missionDuration - NetworkTime.time));
+    }
+
+    public bool IsMissionOver()
+    {
+        return NetworkTime.time >= missionStartTime + missionDuration;
+    }
+
     private void Update()
     {
         if (!isServer) { return; }
@@ -41,6 +72,11 @@ public class EnemyManager : NetworkBehaviour
         {
             SpawnEnemyOnServer();
             timeElapsed = 0f;
+        }
+        if (IsMissionOver())
+        {
+            Debug.Log("Mission timer expired — game over or win condition.");
+            // TODO: Trigger end of game
         }
     }
 

@@ -211,10 +211,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   anim: {fileID: 6863545391564373548}
+  radarCenter: {fileID: 0}
   health: 1
   orbitRadius: 0.25
   orbitSpeed: 10
-  radarCenter: {fileID: 0}
+  rateOfFire: 5
+  precision: 0.5
+  damage: 1
 --- !u!54 &5511371562170980806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -298,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 498933434
+  _assetId: 2590543836
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

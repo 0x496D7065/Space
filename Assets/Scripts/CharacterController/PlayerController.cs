@@ -190,19 +190,17 @@ public class PlayerController : NetworkBehaviour
         //Debug.Log("Tried interact");
         if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
         {
-            if (Hit.collider.TryGetComponent(out Interactable component))
+            if (Hit.collider.TryGetComponent(out Interactable component) && ctx.performed)
                 component.Interact();
-            //Debug.Log("Instant Interact");
+            Debug.Log("Instant Interact");
         }
         else if (heldObject != null)
         {
-            //Debug.Log("HeldObject not null");
+            Debug.Log("HeldObject not null");
             if (heldObject.TryGetComponent(out Interactable component))
             {
                 //Debug.Log("Hold Interact");
-                if (ctx.started)
-                    component.Interact();
-                else if (ctx.canceled)
+                if (ctx.started || ctx.canceled)
                     component.Interact();
             }
         }

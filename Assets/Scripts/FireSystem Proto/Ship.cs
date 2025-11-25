@@ -3,11 +3,15 @@ using Mirror;
 
 public class Ship : DetectableObject
 {
-    [SerializeField] private float health;
+    [Header("Reference")]
+    [SerializeField] private Transform radarCenter;
+
+    [Header("Settings")]
+    [SerializeField] private int health;
     [SerializeField] private float orbitRadius;
     [SerializeField] private float orbitSpeed;
-
-    [SerializeField] private Transform radarCenter;
+    [SerializeField] private float rateOfFire = 5f;
+    [SerializeField] private int   damage = 1;
 
 
     private float currentAngle = 0f;
@@ -20,6 +24,8 @@ public class Ship : DetectableObject
         orbitRadius = radius;
         orbitSpeed = speed;
         init = true;
+
+        Invoke(nameof(TryShoot), rateOfFire);
     }
 
     private void Update()
@@ -32,7 +38,24 @@ public class Ship : DetectableObject
         Vector3 offset = new Vector3(Mathf.Sin(rad), Mathf.Cos(rad), 0f) * orbitRadius;
         transform.position = radarCenter.position + offset;
     }
-    public void TakeDamage(float damage)
+
+    [Server]
+    private void TryShoot()
+    {
+        if (isDead) return;
+
+        if (Random.value > PlayerShip.Instance.evasion)
+        {
+            ShipRoomType[] possibleRooms = (ShipRoomType[])System.Enum.GetValues(typeof(ShipRoomType));
+            ShipRoomType randomRoom = possibleRooms[Random.Range(0, possibleRooms.Length)];
+
+            PlayerShip.Instance.TakeDamage(randomRoom,damage);
+            Debug.Log($"{this} fired on player ship and hit for {damage}");
+        }
+        Invoke(nameof(TryShoot), rateOfFire);
+    }
+    [Server]
+    public void TakeDamage(int damage)
     {
         if (!isServer || isDead) return;
 
@@ -44,20 +67,7 @@ public class Ship : DetectableObject
         Debug.Log($"Ship hit. Health: {health}, isDead:{isDead}");
         if (isDead)
         {
-            //NetworkServer.Destroy(this.gameObject);
-            //this is temporary fix until enemy ships have logic to spawn on server instead of already being in the scene
-            //if (isServer)
-            //{
-            //    Destroy(this.gameObject);
-            //    RpcDestroyOnClients();
-            //}
-            EnemyManager.Instance.RemoveEnemy(this);
+            GameManager.Instance.RemoveEnemy(this);
         }
     }
-    //[ClientRpc]
-    //void RpcDestroyOnClients()
-    //{
-    //    if (!isServer) // server already did it
-    //        Destroy(this.gameObject);
-    //}
 }

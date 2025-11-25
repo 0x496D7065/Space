@@ -32,7 +32,15 @@ public class SteamworkManager : NetworkManager
 
         if (SceneManager.GetActiveScene().name == gameplayScene && conn.identity == null)
         {
-            GameObject player = Instantiate(playerPrefab);
+            GameObject player;
+            GameObject spawnPoint = GameObject.FindWithTag("SpawnPoint");
+
+            if (spawnPoint != null)
+            {
+                player = Instantiate(playerPrefab, spawnPoint.transform.position, Quaternion.identity);
+            }
+            else
+                player = Instantiate(playerPrefab);
             NetworkServer.AddPlayerForConnection(conn, player);
             Debug.Log($"[Server] Player spawned for connection {conn.connectionId} / {player.name}");
         }

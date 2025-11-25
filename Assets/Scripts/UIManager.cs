@@ -2,16 +2,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 //using UnityEngine.Windows;
 
 public class UIManager : MonoBehaviour
 {
-    public GameObject loadoutMenu;
+    [Header("Reference")]
     public GameObject escapeMenu;
     private InputSystem_Actions input;
     public Canvas settingUI;
     public PlayerInput playerInput;
     public SettingsMenu_UGUI settingsMenu;
+    public TextMeshProUGUI timerText;
     private bool isOpened = false;
 
     private void Awake()
@@ -22,6 +24,25 @@ public class UIManager : MonoBehaviour
     private void OnEnable() => input.UI.Enable();
     private void OnDisable() => input.UI.Disable();
 
+    void Update()
+    {
+        if (GameManager.Instance != null)
+        {
+            float timeLeft = GameManager.Instance.GetTimeRemaining();
+            UpdateTimerUI(timeLeft);
+        }
+    }
+
+    private void UpdateTimerUI(float timeLeft)
+    {
+        if (timerText == null) return;
+
+        int minutes = Mathf.FloorToInt(timeLeft / 60f);
+        int seconds = Mathf.FloorToInt(timeLeft % 60f);
+
+        timerText.text = $"{minutes}:{seconds:00}";
+    }
+
     private void HandleEscape()
     {
         if (settingUI.enabled == true)
@@ -30,11 +51,6 @@ public class UIManager : MonoBehaviour
             CloseSettingUI();
             ToggleMenu();
         }
-        //else if (loadoutMenu.activeSelf)
-        //{
-        //    CloseLoadoutMenu();
-        //    ToggleMenu();
-        //}
         else if (escapeMenu.activeSelf)
         {
             // If in pause menu, close menu entirely
@@ -59,20 +75,10 @@ public class UIManager : MonoBehaviour
         settingUI.enabled = false;
         settingsMenu.SaveSettings();
     }
-    public void ShowLoadoutMenu()
-    {
-        ToggleMenu();
-        loadoutMenu.SetActive(true);
-    }
     public void ShowSettingUI()
     {
         ToggleMenu();
         settingUI.enabled = true;
-    }
-
-    public void CloseLoadoutMenu()
-    {
-        loadoutMenu.SetActive(false);
     }
 
     public void BackToMenu()
