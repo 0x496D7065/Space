@@ -6,7 +6,7 @@ public class Missile : NetworkBehaviour
 
     [SerializeField] private float speed;
     [SerializeField] private float maxDistance;
-    [SerializeField] private float damage;
+    [SerializeField] private int damage;
 
     [SerializeField] private LayerMask enemyLayer;
 

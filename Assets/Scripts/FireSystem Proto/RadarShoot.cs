@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class RadarShoot : MonoBehaviour
 {
-    [SerializeField] private GameObject missilePrefab;
+    [SerializeField] private Weapon_Base weapon;
     [SerializeField] private Transform radarCenter;
-    [SerializeField] LayerMask enemyLayer;
 
     [Range(0f, 360f)]
     [SerializeField] public float azimuth = 0f;
@@ -13,23 +12,11 @@ public class RadarShoot : MonoBehaviour
     [ContextMenu("Fire Missile")]
     public void FireFromInspector()
     {
-        FireMissile(azimuth);
+        weapon.Shoot(azimuth, radarCenter);
     }
 
-    public void FireMissile(float azimuth)
+    public void FireWeapon(float azimuth)
     {
-        Vector2 direction = AzimuthToDirection(azimuth);
-        GameObject missile = Instantiate(missilePrefab, radarCenter);
-        NetworkServer.Spawn(missile);
-        Missile missileScript = missile.GetComponent<Missile>();
-        missileScript.Init(direction, azimuth, radarCenter);
-
-        Debug.Log($"Azimuth: {azimuth} Direction: {direction}");
-    }
-
-    private Vector2 AzimuthToDirection(float azimuthDegrees)
-    {
-        float radians = -azimuthDegrees * Mathf.Deg2Rad;
-        return new Vector2(Mathf.Sin(radians), Mathf.Cos(radians));
+        weapon.Shoot(azimuth, radarCenter);
     }
 }
