@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class Shoot : Interactable
+public class ButtonShoot : Interactable
 {
     [Header("Reference")]
     [SerializeField] private RadarShoot radarShoot;
@@ -14,6 +14,6 @@ public class Shoot : Interactable
     [Command(requiresAuthority = false)]
     private void CmdShoot()
     {
-        radarShoot.FireMissile(radarShoot.azimuth);
+        radarShoot.FireWeapon(radarShoot.azimuth);
     }
 }

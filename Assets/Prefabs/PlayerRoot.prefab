@@ -655,6 +655,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   charController: {fileID: 0}
+  rb: {fileID: 0}
   playerBody: {fileID: 1668028052038016471}
   playerCamera: {fileID: 3747433475679889622}
   minPitch: -80
