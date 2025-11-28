@@ -182,12 +182,25 @@ public class PlayerController : NetworkBehaviour
     public void InteractClick(InputAction.CallbackContext ctx)
     {
         if (!isLocalPlayer) { return; }
-        if (!ctx.performed) { return; }
-
+        //if (!ctx.performed) { return; }
+        //Debug.Log("Tried interact");
         if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
         {
             if (Hit.collider.TryGetComponent(out Interactable component))
                 component.Interact();
+            //Debug.Log("Instant Interact");
+        }
+        else if (heldObject != null)
+        {
+            //Debug.Log("HeldObject not null");
+            if (heldObject.TryGetComponent(out Interactable component))
+            {
+                //Debug.Log("Hold Interact");
+                if (ctx.started)
+                    component.Interact();
+                else if (ctx.canceled)
+                    component.Interact();
+            }
         }
     }
     [Command]
@@ -227,6 +240,7 @@ public class PlayerController : NetworkBehaviour
 
         pickable.transform.SetParent(grabPoint);
         pickable.transform.localPosition = Vector3.zero;
+        pickable.transform.localRotation = Quaternion.identity;
     }
     private IEnumerator WaitForAuthorityAndDrop(PickableObject pickable)
     {
