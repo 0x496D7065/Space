@@ -8,6 +8,8 @@ public class ButtonShoot : Interactable
 
     public override void Interact()
     {
+        base.Interact();
+
         CmdShoot();
     }
 

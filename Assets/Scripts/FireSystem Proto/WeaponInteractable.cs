@@ -8,6 +8,8 @@ public class WeaponInteractable: Interactable
 
     public override void Interact()
     {
+        base.Interact();
+
         if (weapon.isOnline)
             CmdRequestReload();
         else

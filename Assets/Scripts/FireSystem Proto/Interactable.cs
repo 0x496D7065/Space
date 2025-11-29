@@ -8,6 +8,7 @@ public class Interactable : NetworkBehaviour
     [SerializeField] private AudioSource audioSource;
     public virtual void Interact()
     {
-        AudioSource.PlayClipAtPoint(audioClip, this.transform.position);
+        audioSource.clip = audioClip;
+        audioSource.Play();
     }
 }

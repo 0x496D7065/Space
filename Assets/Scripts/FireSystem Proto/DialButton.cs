@@ -39,6 +39,8 @@ public class DialButton : Interactable
     //}
     public override void Interact()
     {
+        base.Interact();
+
         int delta = (dialDirection == DialDirection.Up) ? 1 : -1;
         azimuthController.CmdChangeDigit(dialDigitType, delta);
     }
