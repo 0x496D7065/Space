@@ -26,7 +26,7 @@ public class MissileLauncher : Weapon_Base
         NetworkServer.Spawn(missile);
         Missile missileScript = missile.GetComponent<Missile>();
         missileScript.Init(direction, azimuth, radarCenter);
-
+        Debug.Log($"Missile Rotation: {missile.transform.rotation.eulerAngles}");
         Debug.Log($"Azimuth: {azimuth} Direction: {direction}");
 
         currentAmmo -= 1;

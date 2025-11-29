@@ -17,7 +17,7 @@ public class Missile : NetworkBehaviour
     public void Init(Vector2 dir, float azimuth, Transform radarCenter)
     {
         direction = dir.normalized;
-        transform.rotation = Quaternion.Euler(0, 0, azimuth + 90);
+        transform.rotation = Quaternion.Euler(0, -90, azimuth + 90);
         startPos = radarCenter;
         init = true;
     }
