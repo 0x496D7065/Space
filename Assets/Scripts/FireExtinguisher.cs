@@ -15,6 +15,8 @@ public class FireExtinguisher : Interactable
 
     public override void Interact()
     {
+        base.Interact();
+
         //Debug.Log("Extinguisher interact");
         if (sprayEffect != null && !sprayEffect.isPlaying)
         {

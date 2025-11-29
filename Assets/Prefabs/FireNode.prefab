@@ -55,14 +55,15 @@ MonoBehaviour:
   burnTime: 100
   spreadDelay: 3
   spreadRadius: 2
+  minSpreadDirections: 1
+  maxSpreadDirections: 3
+  chanceToSpread: 0
   spreadLayer:
     serializedVersion: 2
     m_Bits: 384
   fireMask:
     serializedVersion: 2
     m_Bits: 16384
-  minSpreadDirections: 1
-  maxSpreadDirections: 3
   extinguishProgress: 0
   extinguishThreshold: 3
 --- !u!114 &7358381105550572155

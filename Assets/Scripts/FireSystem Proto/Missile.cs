@@ -16,16 +16,21 @@ public class Missile : NetworkBehaviour
 
     public void Init(Vector2 dir, float azimuth, Transform radarCenter)
     {
-        direction = dir.normalized;
+        /*direction = dir.normalized;
         transform.rotation = Quaternion.Euler(0, -90, azimuth + 90);
-        startPos = radarCenter;
+        startPos = radarCenter;*/
+        //transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, azimuth));
+        //transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, transform.rotation.z + azimuth));
+        transform.rotation = Quaternion.Euler(azimuth, 0, 0);
+
         init = true;
     }
 
     private void Update()
     {
         if (!isServer || !init) return;
-        transform.position += (Vector3)(speed * Time.deltaTime * direction);
+        //transform.position += (Vector3)(speed * Time.deltaTime * direction);
+        transform.localPosition += transform.up * speed * Time.deltaTime;
         //Debug.Log($"Distance: {Vector2.Distance(transform.position, startPos.position)}");
         if (Vector2.Distance(transform.position, startPos.position) > maxDistance)
             NetworkServer.Destroy(this.gameObject);

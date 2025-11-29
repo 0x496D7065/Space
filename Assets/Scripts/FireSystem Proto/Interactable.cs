@@ -1,7 +1,13 @@
 using UnityEngine;
 using Mirror;
+using System;
 
-public abstract class Interactable : NetworkBehaviour
+public class Interactable : NetworkBehaviour
 {
-    public abstract void Interact();
+    [SerializeField] private AudioClip audioClip;
+    [SerializeField] private AudioSource audioSource;
+    public virtual void Interact()
+    {
+        AudioSource.PlayClipAtPoint(audioClip, this.transform.position);
+    }
 }
