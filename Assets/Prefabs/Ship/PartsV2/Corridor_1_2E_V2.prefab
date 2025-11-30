@@ -331,6 +331,7 @@ GameObject:
   - component: {fileID: 5301952231096446146}
   - component: {fileID: 7781011994678361036}
   - component: {fileID: 1454551217689040155}
+  - component: {fileID: 3629856748517656383}
   m_Layer: 0
   m_Name: Floor Carpet-03 T-Crossing
   m_TagString: Untagged
@@ -406,3 +407,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3629856748517656383
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7981076061407360890}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3550730938793550500, guid: 1b85aefa86c83ec498868dc23c17b323, type: 3}

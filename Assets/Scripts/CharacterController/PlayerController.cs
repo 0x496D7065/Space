@@ -4,12 +4,17 @@ using UnityEngine.InputSystem;
 using Mirror;
 using System.Collections;
 using Unity.Mathematics;
+using System.Collections.Generic;
 
 public class PlayerController : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] private CharacterController charController;
     [SerializeField] private Rigidbody rb;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private List<AudioClip> audioStepClips;
+    [SerializeField] private AudioClip audioGrabClips;
+    [SerializeField] private AudioClip audioDropClips;
 
     [Header("Camera Reference")]
     [SerializeField] private Transform playerBody;
@@ -41,8 +46,7 @@ public class PlayerController : NetworkBehaviour
     private Vector3 velocity;
     private PickableObject heldObject;
     private Camera playerCam;
-    AudioListener listener;
-
+    private AudioListener listener;
 
     private PlayerInput input;
     private InputAction moveAction;
@@ -52,6 +56,12 @@ public class PlayerController : NetworkBehaviour
     private Vector2 lookInput = Vector2.zero;
     private float pitch = 0f;
 
+    private Vector3 lastPosition;
+    private float tempTime;
+
+    private const float STEP_COOLDOWN = 0.5f;
+    private const float STEP_DISTANCE = 1.5f;
+
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
@@ -59,6 +69,8 @@ public class PlayerController : NetworkBehaviour
         playerCam = GetComponentInChildren<Camera>();
         input = GetComponent<PlayerInput>();
         listener = playerCam.GetComponent<AudioListener>();
+        audioSource = GetComponent<AudioSource>();
+        lastPosition = this.transform.position;
 
         moveAction = input.actions["Move"];
         sprintAction = input.actions["Sprint"];
@@ -104,13 +116,27 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
-        if (!isLocalPlayer) { return; }
+        if (Vector3.Distance(this.transform.position, lastPosition) > STEP_DISTANCE)
+        {
+            lastPosition = this.transform.position;
+
+            PlayStepSound();
+        }
+
+        if (!isLocalPlayer) 
+        {
+            return; 
+        }
+
         Vector2 moveInput = moveAction.ReadValue<Vector2>();
         bool isSprinting = sprintAction.IsPressed();
 
 
         Vector3 moveDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
         float speed = isSprinting ? walkSpeed * sprintMultiplier : walkSpeed;
+
+        /*if (moveDirection != Vector3.zero)
+            PlayStepSound();*/
 
         charController.Move(speed * Time.deltaTime * moveDirection);
         //rb.MovePosition(rb.position + speed * Time.deltaTime * moveDirection);
@@ -143,6 +169,22 @@ public class PlayerController : NetworkBehaviour
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
         playerCamera.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
+
+    private void PlayStepSound()
+    {
+        //if (tempTime > Time.time)
+        //return;
+
+        //tempTime = Time.time + STEP_COOLDOWN;
+        PlaySoundToPlayer(audioStepClips[UnityEngine.Random.Range(0, audioStepClips.Count)]);
+    }
+
+    public void PlaySoundToPlayer(AudioClip clip)
+    {
+        //audioSource.Stop();
+        audioSource.clip = clip;
+        audioSource.Play();
     }
 
     private bool IsGrounded()

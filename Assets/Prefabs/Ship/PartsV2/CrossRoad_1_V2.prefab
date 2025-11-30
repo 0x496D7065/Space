@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 1922706026557893172}
   - component: {fileID: 6654689299263432776}
   - component: {fileID: 3595508874084561287}
+  - component: {fileID: 7151151485812210466}
   m_Layer: 0
   m_Name: Floor Grid-01 Crossing
   m_TagString: Untagged
@@ -172,6 +173,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7151151485812210466
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305704797823816839}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6467275173207868045, guid: 1b85aefa86c83ec498868dc23c17b323, type: 3}
 --- !u!1 &7449436508991988037
 GameObject:
   m_ObjectHideFlags: 0
