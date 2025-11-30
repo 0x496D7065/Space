@@ -92,7 +92,7 @@ public class GameManager : NetworkBehaviour
 
         Vector3 spawnPosition = radarCenter.position + spawnOffset;
 
-        GameObject enemyShip = Instantiate(enemyShipPrefab, spawnPosition, Quaternion.identity);
+        GameObject enemyShip = Instantiate(enemyShipPrefab, spawnPosition, radarCenter.rotation);
 
         enemyShip.TryGetComponent<Ship>( out var shipScript);
         if (shipScript != null)

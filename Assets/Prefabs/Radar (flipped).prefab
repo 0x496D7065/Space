@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.1757}
+  m_LocalScale: {x: 0.33333334, y: 0.35205695, z: 0.081359506}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3314509021908314093}
@@ -123,11 +123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fabf3a8f25b0dc44c9c740ddad23eb63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missilePrefab: {fileID: 6008965485443316108, guid: e37d9cdbf2f264d4a9bdb6d0b6fb478e, type: 3}
+  weapon: {fileID: 0}
   radarCenter: {fileID: 8070377746212215445}
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 512
   azimuth: 0
 --- !u!1 &633480058844200115
 GameObject:

@@ -15,7 +15,9 @@ public class Missile : NetworkBehaviour
 
     public void Init(float azimuth, Transform radarCenter)
     {
-        transform.rotation = Quaternion.Euler(-azimuth, 0, 0);
+        transform.localRotation = Quaternion.Euler(0, 0, azimuth);
+        startPos = radarCenter;
+        Debug.Log($"azimuth init {azimuth}");
         init = true;
     }
 

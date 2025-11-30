@@ -36,7 +36,8 @@ public class Ship : DetectableObject
 
         float rad = currentAngle * Mathf.Deg2Rad;
         Vector3 offset = new Vector3(Mathf.Sin(rad), Mathf.Cos(rad), 0f) * orbitRadius;
-        transform.position = radarCenter.position + offset;
+        //transform.position = radarCenter.position + offset;
+        transform.position = radarCenter.TransformPoint(offset);
     }
 
     [Server]
