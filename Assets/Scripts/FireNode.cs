@@ -9,6 +9,7 @@ public class FireNode : NetworkBehaviour, IExtinguishable
     [Header("Reference")]
     [SerializeField] private GameObject fireVFXPrefab;
     [SerializeField] private GameObject fireNodePrefab;
+    [SerializeField] private Collider testSalle;
     private GameObject fireVFX;
 
     [Header("Spread Settings")]
@@ -94,6 +95,7 @@ public class FireNode : NetworkBehaviour, IExtinguishable
 
         Invoke(nameof(TrySpread), spreadDelay);
     }
+
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;

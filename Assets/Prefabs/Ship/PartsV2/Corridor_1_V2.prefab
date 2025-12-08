@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5499170853150533826}
   - component: {fileID: 5523093283968179095}
   - component: {fileID: 1119609792004612135}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Light Strip-05 Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 6300173174189060940}
   - component: {fileID: 5211797467057101946}
   - component: {fileID: 8918419241543957163}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Conduit-05 Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,7 +185,7 @@ GameObject:
   - component: {fileID: 6302954960579716917}
   - component: {fileID: 6747195024300111449}
   - component: {fileID: 5260411737681700368}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Corridor_1_V2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -297,7 +297,7 @@ GameObject:
   - component: {fileID: 7837342533210094860}
   - component: {fileID: 5047542803960128373}
   - component: {fileID: 1862539277380631896}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Floor Grid-01 Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}

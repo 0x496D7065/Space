@@ -52,12 +52,13 @@ MonoBehaviour:
   syncInterval: 0
   fireVFXPrefab: {fileID: 7039891411631670340, guid: db643520f63950b408154166aeae5e36, type: 3}
   fireNodePrefab: {fileID: 0}
+  testSalle: {fileID: 0}
   burnTime: 100
   spreadDelay: 3
-  spreadRadius: 2
+  spreadRadius: 1
   minSpreadDirections: 1
   maxSpreadDirections: 3
-  chanceToSpread: 0
+  chanceToSpread: 10
   spreadLayer:
     serializedVersion: 2
     m_Bits: 384
@@ -102,5 +103,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.5, y: 1.5, z: 0.1}
+  m_Size: {x: 0.5, y: 0.5, z: 0.1}
   m_Center: {x: 0, y: 0.04460737, z: 0}

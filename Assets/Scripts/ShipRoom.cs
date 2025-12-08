@@ -15,6 +15,7 @@ public class ShipRoom : NetworkBehaviour
     [Header("Reference")]
     [SerializeField] public ShipRoomType roomType;
     [SerializeField] public GameObject firePrefab;
+    [SerializeField] public Collider roomBox;
 
     [Header("Settings")]
     [SerializeField] private float roomHealth;
@@ -46,7 +47,8 @@ public class ShipRoom : NetworkBehaviour
         }
         if (Random.value > 0.2f)
         {
-            CmdStartFire(transform.position, -transform.up);
+            Vector3 pos = new Vector3(Random.Range(roomBox.bounds.min.x, roomBox.bounds.max.x), roomBox.bounds.max.y, Random.Range(roomBox.bounds.min.z, roomBox.bounds.max.z)) ;
+            CmdStartFire(roomBox.ClosestPointOnBounds(pos), -transform.up); // attention au Y peut etre ichala
 
         }
         Debug.Log($"{roomType} took damage, roomHealth remaining: {roomHealth}");
@@ -60,6 +62,8 @@ public class ShipRoom : NetworkBehaviour
     public void CmdStartFire(Vector3 origin, Vector3 direction)//Temporary fire spawn
     {
         Debug.Log("Hit started a fire");
+
+
         if (Physics.Raycast(origin, direction, out RaycastHit hit, 20f))
         {
             Vector3 firePos = hit.point + hit.normal * 0.01f;

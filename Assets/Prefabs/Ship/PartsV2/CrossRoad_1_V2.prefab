@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1939466842647664710}
   - component: {fileID: 586692105741246765}
   - component: {fileID: 6012156303128502734}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Conduit-04 Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 6654689299263432776}
   - component: {fileID: 3595508874084561287}
   - component: {fileID: 7151151485812210466}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Floor Grid-01 Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 2320401719246171033}
   - component: {fileID: 4137848273548068981}
   - component: {fileID: 7065331686944339207}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Lamp-01 Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -294,7 +294,7 @@ GameObject:
   - component: {fileID: 7046862731560541020}
   - component: {fileID: 3789982946084777357}
   - component: {fileID: 6930716471875081689}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CrossRoad_1_V2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 860463924489894620}
   - component: {fileID: 5672374580491814867}
   - component: {fileID: 1372556257523142851}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

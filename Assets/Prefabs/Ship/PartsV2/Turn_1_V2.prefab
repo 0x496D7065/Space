@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4760832573728520835}
   - component: {fileID: 7655992403512604531}
   - component: {fileID: 5096520005269910081}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Floor Carpet-03 Bend Smooth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 2018684832716364797}
   - component: {fileID: 7031488122960922493}
   - component: {fileID: 112065200810723723}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Light Strip-05 Bend Smooth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 3726567562909330830}
   - component: {fileID: 3027236890380420655}
   - component: {fileID: -3370119007840527714}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Turn_1_V2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

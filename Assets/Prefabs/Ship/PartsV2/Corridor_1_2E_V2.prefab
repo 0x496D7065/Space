@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5125236184766637461}
   - component: {fileID: 6184763291102780514}
   - component: {fileID: 3356060522552497609}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Lamp-02 T-Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 3239784721690354693}
   - component: {fileID: 6841674576562912741}
   - component: {fileID: 617329766136963303}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 2028948501052062966}
   - component: {fileID: 3817554864891753840}
   - component: {fileID: 758294438426960779}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Corridor_1_2E_V2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -332,7 +332,7 @@ GameObject:
   - component: {fileID: 7781011994678361036}
   - component: {fileID: 1454551217689040155}
   - component: {fileID: 3629856748517656383}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Floor Carpet-03 T-Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
