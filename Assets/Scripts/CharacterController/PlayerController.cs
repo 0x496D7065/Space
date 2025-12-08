@@ -15,6 +15,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private List<AudioClip> audioStepClips;
     [SerializeField] private AudioClip audioGrabClips;
     [SerializeField] private AudioClip audioDropClips;
+    [SerializeField] private AudioClip audioTorchClips;
 
     [Header("Camera Reference")]
     [SerializeField] private Transform playerBody;
