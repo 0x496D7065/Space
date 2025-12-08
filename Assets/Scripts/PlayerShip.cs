@@ -1,17 +1,25 @@
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
+using FirstGearGames.SmoothCameraShaker;
 
 public class PlayerShip : NetworkBehaviour
 {
-    //[Header("Reference")]
+    [Header("Reference")]
+    [SerializeField] private ShakeData explosionShakeData;
     [Header("Settings")]
-    [SerializeField]private int hullIntegrity;
     [SerializeField] public float evasion = 0.5f;// will later be linked to engine room status
 
     public static PlayerShip Instance { get; private set; }
     public readonly Dictionary<ShipRoomType, ShipRoom> roomMap = new();
+    private Slider ShipHullHpSlider;
+    private AudioSource AlarmSound;
+    private AudioSource BoomSound;
     private bool isDead;
+
+    [SyncVar(hook = nameof(OnHealthChanged))]
+    [SerializeField] private int hullIntegrity;
 
     private void Awake()
     {
@@ -23,6 +31,25 @@ public class PlayerShip : NetworkBehaviour
         }
 
         Instance = this;
+
+        ShipHullHpSlider = GameObject.Find("ShipHpSlider")?.GetComponent<Slider>();
+        AlarmSound = GameObject.Find("AlarmAudioSource")?.GetComponent<AudioSource>();
+        BoomSound = GameObject.Find("ShipHitAudioSource")?.GetComponent<AudioSource>();
+    }
+
+    void OnHealthChanged(int oldHealth, int NewHealth)
+    {
+        if (ShipHullHpSlider != null)
+            ShipHullHpSlider.value = NewHealth;
+        if (AlarmSound != null && !AlarmSound.isPlaying)
+            AlarmSound.Play();
+        if (BoomSound != null)
+        {
+            BoomSound.Stop();
+            BoomSound.Play();
+            if (explosionShakeData != null)
+                CameraShakerHandler.Shake(explosionShakeData);
+        }
     }
 
     [Server]
