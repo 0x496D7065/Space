@@ -49,13 +49,13 @@ public class MouseSlide : Interactable
 
         currentSlideAmount = Mathf.Lerp(currentSlideAmount, targetSlide, slideLerpSpeed * Time.fixedDeltaTime);//this serves to know where is the object between it's minSlide
                                                                                                                //and maxSlide and lerp it toward the targetSlide
-        Vector3 localOffset = localSlideAxis.normalized * currentSlideAmount;
+        //Vector3 localOffset = localSlideAxis.normalized * currentSlideAmount;
         //transform.localPosition = initialPosition + localOffset;
         //Vector3 worldPosition = transform.parent.TransformPoint(initialPosition + localOffset);
-        Vector3 worldOffset = trayAnchor.TransformDirection(localSlideAxis.normalized) * currentSlideAmount;
-        Vector3 worldPosition = trayAnchor.position + initialPosition + worldOffset;
-
-        rb.MovePosition(worldPosition);
+        Vector3 worldOffset = trayAnchor.TransformDirection(localSlideAxis.normalized) * currentSlideAmount;   //The tray was initially a child of the launcher but this was impossible
+        Vector3 worldPosition = trayAnchor.position + initialPosition + worldOffset;                           //because both launcher and tray needs a networkidentity. So the tray was moved
+                                                                                                               //out of the hierarchy and I added an anchor point that hold a reference of the
+        rb.MovePosition(worldPosition);                                                                        //transform located on the launcher to place the tray
 
         if (!isSliding) return;
 
