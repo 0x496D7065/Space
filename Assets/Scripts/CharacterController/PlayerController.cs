@@ -9,6 +9,9 @@ using System.Collections.Generic;
 public class PlayerController : NetworkBehaviour
 {
     [Header("References")]
+
+    public static PlayerController localPlayer;
+
     [SerializeField] private CharacterController charController;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private AudioSource audioSource;
@@ -46,6 +49,7 @@ public class PlayerController : NetworkBehaviour
     private readonly float groundDistance = 0.4f;
     private Vector3 velocity;
     private PickableObject heldObject;
+    private Interactable currentInteraction;
     private Camera playerCam;
     private AudioListener listener;
 
@@ -83,6 +87,7 @@ public class PlayerController : NetworkBehaviour
         base.OnStartLocalPlayer();
         Debug.Log($"[PlayerController] Local player started: {netId}, isLocalPlayer={isLocalPlayer}");
 
+        localPlayer = this;
         EnableLocalPlayer();
         StartCoroutine(AssignUIManagerWhenReady());
     }
@@ -103,7 +108,10 @@ public class PlayerController : NetworkBehaviour
     {
         LockCursor(true);
         if (playerCam != null)
+        {
+            playerCam.tag = "MainCamera";
             playerCam.enabled = true;
+        }
         if (input != null)
             input.enabled = true;
         if (listener != null)
@@ -229,27 +237,39 @@ public class PlayerController : NetworkBehaviour
     public void InteractClick(InputAction.CallbackContext ctx)
     {
         if (!isLocalPlayer) { return; }
-        //if (!ctx.performed) { return; }
-        //Debug.Log("Tried interact");
-        if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
+        if (ctx.started)
         {
-            if (Hit.collider.TryGetComponent(out Interactable component) && ctx.performed)
-                component.Interact();
-            Debug.Log("Instant Interact");
-        }
-        else if (heldObject != null)
-        {
-            Debug.Log("HeldObject not null");
-            if (heldObject.TryGetComponent(out Interactable component))
+            if (heldObject != null)
             {
-                //Debug.Log("Hold Interact");
-                if (ctx.started || ctx.canceled)
-                    component.Interact();
+                Debug.Log("HeldObject not null");
+                if (heldObject.TryGetComponent(out Interactable component))
+                {
+                    currentInteraction = component;
+                    component.Interact(ctx);
+                }
+            }
+            else if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out RaycastHit Hit, interactDistance, interactMask))
+            {
+                if (Hit.collider.TryGetComponent(out Interactable component))
+                {
+                    currentInteraction = component;
+                    component.Interact(ctx);
+                    Debug.Log("Instant Interact");
+                }
+            }
+        }
+        else if (ctx.canceled)
+        {
+            if (currentInteraction != null)
+            {
+                currentInteraction.Interact(ctx);
+                currentInteraction = null;
             }
         }
     }
+
     [Command]
-    void CmdAssignAuthority(NetworkIdentity obj)
+    public void CmdAssignAuthority(NetworkIdentity obj)
     {
         if (obj.connectionToClient != null)
             obj.RemoveClientAuthority();
@@ -284,8 +304,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         pickable.transform.SetParent(grabPoint);
-        pickable.transform.localPosition = Vector3.zero;
-        pickable.transform.localRotation = Quaternion.identity;
+        pickable.transform.SetLocalPositionAndRotation(Vector3.zero, pickable.pickupRotation);
     }
     private IEnumerator WaitForAuthorityAndDrop(PickableObject pickable)
     {

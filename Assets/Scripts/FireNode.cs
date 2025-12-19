@@ -181,7 +181,7 @@ public class FireNode : NetworkBehaviour, IExtinguishable
 
 
     //Extinguish logic
-    [Server]
+    //[Server]
     public void ApplyExtinguish(float amount)
     {
         if (!isBurning) { return; }

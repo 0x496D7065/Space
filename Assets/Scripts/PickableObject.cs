@@ -4,6 +4,7 @@ using UnityEngine;
 public class PickableObject : NetworkBehaviour  
 {
     private Rigidbody rb;
+    public Quaternion pickupRotation = Quaternion.identity;
 
     private void Awake()
     {

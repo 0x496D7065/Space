@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FireExtinguisher : Interactable
 {
@@ -13,19 +14,21 @@ public class FireExtinguisher : Interactable
 
     private bool isSpraying = false;
 
-    public override void Interact()
+    public override void Interact(InputAction.CallbackContext ctx)
     {
-        base.Interact();
+        base.Interact(ctx);
 
         //Debug.Log("Extinguisher interact");
-        if (sprayEffect != null && !sprayEffect.isPlaying)
+        //if (sprayEffect != null && !sprayEffect.isPlaying)
+        if (ctx.started)
         {
             //Debug.Log("Extinguisher starting");
             sprayEffect.Play();
             isSpraying = true;
             CmdToggleSpray(isSpraying);
         }
-        else if (sprayEffect.isPlaying)
+        //else if (sprayEffect.isPlaying)
+        else if (ctx.canceled)
         {
             //Debug.Log("Extinguisher stopping");
             sprayEffect.Stop();
@@ -41,7 +44,7 @@ public class FireExtinguisher : Interactable
         CmdSpray(origin, transform.forward);
     }
 
-    [Command]
+    //[Command]
     void CmdSpray(Vector3 origin, Vector3 direction)
     {
         RaycastHit[] hits = Physics.SphereCastAll(

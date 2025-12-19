@@ -57,7 +57,7 @@ MonoBehaviour:
   spreadDelay: 3
   spreadRadius: 1
   minSpreadDirections: 1
-  maxSpreadDirections: 3
+  maxSpreadDirections: 1
   chanceToSpread: 10
   spreadLayer:
     serializedVersion: 2

@@ -1,16 +1,18 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ButtonShoot : Interactable
 {
     [Header("Reference")]
     [SerializeField] private RadarShoot radarShoot;
 
-    public override void Interact()
+    public override void Interact(InputAction.CallbackContext ctx)
     {
-        base.Interact();
+        base.Interact(ctx);
 
-        CmdShoot();
+        if (ctx.started)
+            CmdShoot();
     }
 
     [Command(requiresAuthority = false)]

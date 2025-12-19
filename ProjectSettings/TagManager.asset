@@ -6,6 +6,7 @@ TagManager:
   tags:
   - enemy
   - SpawnPoint
+  - Missile_Ammo
   layers:
   - Default
   - TransparentFX

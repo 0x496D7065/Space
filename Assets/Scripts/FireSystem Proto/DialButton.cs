@@ -1,4 +1,6 @@
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum DialDigitType
 {
@@ -37,12 +39,15 @@ public class DialButton : Interactable
     //            break;
     //    }
     //}
-    public override void Interact()
+    public override void Interact(InputAction.CallbackContext ctx)
     {
-        base.Interact();
+        base.Interact(ctx);
 
-        int delta = (dialDirection == DialDirection.Up) ? 1 : -1;
-        azimuthController.CmdChangeDigit(dialDigitType, delta);
+        if (ctx.started)
+        {
+            int delta = (dialDirection == DialDirection.Up) ? 1 : -1;
+            azimuthController.CmdChangeDigit(dialDigitType, delta);
+        }
     }
 
     //private void UpdateDigit(DialDigit dialDigit)

@@ -1,18 +1,19 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class WeaponInteractable: Interactable
 {
     [Header("Reference")]
     public Weapon_Base weapon;
 
-    public override void Interact()
+    public override void Interact(InputAction.CallbackContext ctx)
     {
-        base.Interact();
+        base.Interact(ctx);
 
-        if (weapon.isOnline)
+        if (weapon.isOnline && ctx.started)
             CmdRequestReload();
-        else
+        else if (ctx.started)
             CmdRequestRepair();
     }
 

@@ -16,5 +16,11 @@ public abstract class Weapon_Base : ShipComponent
         }
     }
 
+    [Server]
+    protected void SetAmmo(int amount)
+    {
+        currentAmmo = Mathf.Clamp(amount, 0, maxAmmo);
+    }
+
     public bool CanShoot => currentAmmo > 0;
 }
