@@ -16,6 +16,7 @@ public class PlayerShip : NetworkBehaviour
     private Slider ShipHullHpSlider;
     private AudioSource AlarmSound;
     private AudioSource BoomSound;
+    public Collider playerShipCollider;
     private bool isDead;
 
     [SyncVar(hook = nameof(OnHealthChanged))]
@@ -35,6 +36,7 @@ public class PlayerShip : NetworkBehaviour
         ShipHullHpSlider = GameObject.Find("ShipHpSlider")?.GetComponent<Slider>();
         AlarmSound = GameObject.Find("AlarmAudioSource")?.GetComponent<AudioSource>();
         BoomSound = GameObject.Find("ShipHitAudioSource")?.GetComponent<AudioSource>();
+        playerShipCollider = GameObject.Find("PlayerShipCollider")?.GetComponent<Collider>();
     }
 
     void OnHealthChanged(int oldHealth, int NewHealth)

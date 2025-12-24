@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
-    private readonly List<Ship> enemyList = new();
+    private readonly List<EnemyShip> enemyList = new();
 
     [Header("Reference")]
     [SerializeField] private Transform radarCenter;
@@ -94,7 +94,7 @@ public class GameManager : NetworkBehaviour
 
         GameObject enemyShip = Instantiate(enemyShipPrefab, spawnPosition, radarCenter.rotation);
 
-        enemyShip.TryGetComponent<Ship>( out var shipScript);
+        enemyShip.TryGetComponent<EnemyShip>( out var shipScript);
         if (shipScript != null)
         {
             float speed = Random.Range(minSpeed, maxSpeed);
@@ -105,7 +105,7 @@ public class GameManager : NetworkBehaviour
         NetworkServer.Spawn(enemyShip);
     }
 
-    public void RemoveEnemy(Ship ship)
+    public void RemoveEnemy(EnemyShip ship)
     {
         if (!isServer) return;
 

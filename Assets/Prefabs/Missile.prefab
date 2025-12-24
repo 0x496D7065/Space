@@ -142,7 +142,9 @@ MonoBehaviour:
   syncInterval: 0
   speed: 0.05
   maxDistance: 0.5
+  activationDistance: 0.01
   damage: 1
+  targetedShipRoom: 0
   enemyLayer:
     serializedVersion: 2
     m_Bits: 512

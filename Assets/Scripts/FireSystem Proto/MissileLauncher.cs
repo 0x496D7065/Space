@@ -63,7 +63,11 @@ public class MissileLauncher : Weapon_Base
         GameObject missile = Instantiate(missilePrefab, radarCenter);
         NetworkServer.Spawn(missile);
         Missile missileScript = missile.GetComponent<Missile>();
-        missileScript.Init(azimuth, radarCenter);
+
+        ShipRoomType[] possibleRooms = (ShipRoomType[])System.Enum.GetValues(typeof(ShipRoomType));
+        ShipRoomType target = possibleRooms[1];
+
+        missileScript.Init(azimuth, radarCenter, target, PlayerShip.Instance.playerShipCollider);
 
         //Debug.Log($"Missile Rotation: {missile.transform.rotation.eulerAngles}");
 

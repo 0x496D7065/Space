@@ -297,6 +297,7 @@ MonoBehaviour:
   syncInterval: 0
   audioClip: {fileID: 0}
   audioSource: {fileID: 0}
+  trayAnchor: {fileID: 0}
   localSlideAxis: {x: 0, y: 0, z: 1}
   slideSpeed: 0.01
   slideLerpSpeed: 4
