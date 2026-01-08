@@ -44,7 +44,7 @@ public class FireExtinguisher : Interactable
         CmdSpray(origin, transform.forward);
     }
 
-    //[Command]
+    [Command]
     void CmdSpray(Vector3 origin, Vector3 direction)
     {
         RaycastHit[] hits = Physics.SphereCastAll(
@@ -68,17 +68,21 @@ public class FireExtinguisher : Interactable
     {
         // Local player already played effect.
         // Now tell all other players.
-        foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
-        {
-            if (conn != connectionToClient) // exclude the sender
-            {
-                ShowEffectToOthers(conn, spraying);
-            }
-        }
+        //foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
+        //{
+        //    if (conn != connectionToClient) // exclude the sender
+        //    {
+        //        ShowEffectToOthers(conn, spraying);
+        //    }
+        //} //TargetRPC version. Doesn't really work since CmdToggleSpray has to be a command anyway, switched for ClientRpc for now
+
+        ShowEffectToOthers(spraying);
     }
-    [TargetRpc]
-    private void ShowEffectToOthers(NetworkConnection target, bool spraying)
+    [ClientRpc]
+    private void ShowEffectToOthers(bool spraying)
     {
+        if (isLocalPlayer) return;
+
         if (spraying && !sprayEffect.isPlaying)
             sprayEffect.Play();
         else if (!spraying && sprayEffect.isPlaying)
